@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toimiston infonäyttö</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #0f172a; }
+        #root { height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Häivytysanimaatio tekstille */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // --- ASETUKSET ---
+        const CYCLE_INTERVAL_MS = 20000;     // 20 s per näkymä
+        const HOLIDAY_IMAGE_BASENAME = './kuvat/lomatiedot';
+        const HOLIDAY_IMAGE_EXTS = ['png', 'jpg', 'jpeg', 'webp'];
+        const DAY_START_HOUR = 7;
+        const DAY_END_HOUR = 17;
+        const STARTING_SOON_MINUTES = 30;
+
+        // --- IKONIT (SVG) ---
+        const ICONS = {
+            Calendar: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
+            Clock: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+            MapPin: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21.7c-4.9-5.1-8-10.2-8-14.7C4 3.7 7.7 0 12 0s8 3.7 8 7c0 4.5-3.1 9.6-8 14.7z"/><circle cx="12" cy="7" r="3"/></svg>,
+            Sun: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
+            Cloud: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19H12a5 5 0 0 1-4.72-3.85c-.09-.59-.12-1.2-.12-1.8a5 5 0 0 1 10-2z"/></svg>,
+            CloudRain: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 13V9a6 6 0 0 0-12 0v4"/><line x1="16" y1="17" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="17" x2="8" y2="21"/></svg>,
+            CloudSnow: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 13V9a6 6 0 0 0-12 0v4"/><path d="M10 21v-3.5"/><path d="M14 21v-3.5"/><path d="M12 18v-3.5"/></svg>,
+            Wind: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 7L5 12h5.5l-.5 5 4.5-5h-5.5l.5-5z"/><path d="M21 17h-7"/></svg>,
+            Droplets: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13.5 8.5l-.5.5 1 1.5-1 1.5 1 1.5-1 1.5 1 1.5M10.5 8.5l.5.5-1 1.5 1 1.5-1 1.5 1 1.5M7.5 8.5l-.5.5 1 1.5-1 1.5 1 1.5-1 1.5"/></svg>,
+            ThumbsUp: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>,
+            Door: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M18 22V8a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><circle cx="10" cy="13" r="1" fill="currentColor"/></svg>,
+            Bus: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h19"/><path d="M4 17h.01"/><path d="M20 17h.01"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>,
+            Palm: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35z"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></svg>,
+        };
+
+        // --- SÄÄLOGIIKKA ---
+        const getWeatherIcon = (code) => {
+          const props = { className: "w-12 h-12" };
+          if (code === 0 || code === 1) return <ICONS.Sun {...props} className={`${props.className} text-yellow-400`} />;
+          if (code === 2 || code === 3) return <ICONS.Cloud {...props} className={`${props.className} text-gray-400`} />;
+          if (code >= 51 && code <= 67) return <ICONS.CloudRain {...props} className={`${props.className} text-blue-400`} />;
+          if (code >= 71 && code <= 77) return <ICONS.CloudSnow {...props} className={`${props.className} text-white`} />;
+          if (code >= 95) return <ICONS.CloudRain {...props} className={`${props.className} text-purple-400`} />;
+          return <ICONS.Cloud {...props} className={`${props.className} text-gray-400`} />;
+        };
+
+        const getWeatherDescription = (code) => {
+          const codes = {
+            0: 'Selkeää', 1: 'Melkein selkeää', 2: 'Puolipilvistä', 3: 'Pilvistä', 45: 'Sumua',
+            48: 'Huurteista sumua', 51: 'Kevyttä tihkua', 53: 'Tihkusadetta', 55: 'Tiheää tihkua',
+            61: 'Kevyttä sadetta', 63: 'Sadetta', 65: 'Voimakasta sadetta', 71: 'Kevyttä lumisadetta',
+            73: 'Lumisadetta', 75: 'Voimakasta lumisadetta', 95: 'Ukkosta',
+          };
+          return codes[code] || 'Tuntematon';
+        };
+
+        // --- VARAUSTILANNE: APUFUNKTIOT ---
+        const fmtHM = (iso) => new Date(iso).toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' });
+
+        function getRoomStatus(bookings, now) {
+          const current = bookings.find(b => new Date(b.start) <= now && now < new Date(b.end));
+          if (current) {
+            return { type: 'busy', detail: `Vapautuu ${fmtHM(current.end)}`, booking: current };
+          }
+          const next = bookings
+            .filter(b => new Date(b.start) > now)
+            .sort((a, b) => new Date(a.start) - new Date(b.start))[0];
+          if (next) {
+            const minutesUntil = (new Date(next.start) - now) / 60000;
+            if (minutesUntil <= STARTING_SOON_MINUTES) {
+              return { type: 'starting_soon', detail: `Alkaa ${fmtHM(next.start)}`, booking: next };
+            }
+            return { type: 'free', detail: `Vapaa ${fmtHM(next.start)} asti`, booking: next };
+          }
+          return { type: 'free', detail: 'Vapaa koko päivän', booking: null };
+        }
+
+        // --- VARAUSTILANNE: KOMPONENTIT ---
+        function VerticalTimeline({ bookings, currentTime }) {
+          const dayStart = new Date(currentTime);
+          dayStart.setHours(DAY_START_HOUR, 0, 0, 0);
+          const dayEnd = new Date(currentTime);
+          dayEnd.setHours(DAY_END_HOUR, 0, 0, 0);
+          const totalMs = dayEnd - dayStart;
+
+          const pct = (t) => ((new Date(t) - dayStart) / totalMs) * 100;
+          const clamp = (n) => Math.max(0, Math.min(100, n));
+          const currentPct = clamp(pct(currentTime));
+          const hours = Array.from({ length: DAY_END_HOUR - DAY_START_HOUR + 1 }, (_, i) => DAY_START_HOUR + i);
+
+          return (
+            <div className="flex-1 min-h-0 flex gap-1.5">
+              {/* Tuntileima vasemmalla */}
+              <div className="relative w-7 text-xs text-slate-500 font-mono shrink-0">
+                {hours.map((h, i) => {
+                  const top = (i / (hours.length - 1)) * 100;
+                  return (
+                    <span
+                      key={h}
+                      className="absolute -translate-y-1/2 right-0 text-right"
+                      style={{ top: `${top}%` }}
+                    >
+                      {String(h).padStart(2, '0')}
+                    </span>
+                  );
+                })}
+              </div>
+
+              {/* Aikajanarata */}
+              <div className="flex-1 relative bg-slate-800/40 rounded-lg border border-slate-700/60 overflow-hidden">
+                {/* Tuntien apuviivat */}
+                {hours.slice(1, -1).map((h, i) => {
+                  const top = ((i + 1) / (hours.length - 1)) * 100;
+                  return (
+                    <div
+                      key={h}
+                      className="absolute left-0 right-0 border-t border-slate-700/40"
+                      style={{ top: `${top}%` }}
+                    />
+                  );
+                })}
+
+                {/* Varausslotit */}
+                {bookings.map((b, i) => {
+                  const top = clamp(pct(b.start));
+                  const bottom = clamp(pct(b.end));
+                  const height = Math.max(0, bottom - top);
+                  if (height <= 0) return null;
+
+                  const endDate = new Date(b.end);
+                  const startDate = new Date(b.start);
+                  const isPast = endDate < currentTime;
+                  const isCurrent = startDate <= currentTime && currentTime < endDate;
+
+                  const bgClass = isCurrent
+                    ? 'bg-red-500/80 border-red-400'
+                    : isPast
+                    ? 'bg-slate-600/30 border-slate-600/50'
+                    : 'bg-red-500/40 border-red-500/60';
+                  const textClass = isPast ? 'text-slate-400' : 'text-white';
+
+                  return (
+                    <div
+                      key={i}
+                      className={`absolute left-1 right-1 border rounded ${bgClass} ${textClass} flex flex-col overflow-hidden px-1.5 py-1`}
+                      style={{ top: `${top}%`, height: `${height}%` }}
+                    >
+                      <div className="text-xs font-bold tabular-nums leading-tight">
+                        {fmtHM(b.start)}–{fmtHM(b.end)}
+                      </div>
+                      {b.organizerInitials && height > 4 && (
+                        <div className="text-xs opacity-80 leading-tight mt-0.5">
+                          {b.organizerInitials}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Nykyinen hetki */}
+                {currentPct > 0 && currentPct < 100 && (
+                  <div
+                    className="absolute left-0 right-0 flex items-center pointer-events-none z-10"
+                    style={{ top: `${currentPct}%`, transform: 'translateY(-50%)' }}
+                  >
+                    <div className="flex-1 h-0.5 bg-yellow-300 shadow-[0_0_6px_rgba(253,224,71,0.9)]"></div>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        function RoomCard({ room, currentTime }) {
+          const bookings = room.bookings || [];
+          const status = getRoomStatus(bookings, currentTime);
+
+          const styles = {
+            busy: {
+              text: 'VARATTU',
+              dot: 'bg-red-500',
+              border: 'border-red-500/40',
+              bg: 'bg-gradient-to-b from-red-900/25 to-slate-900',
+              statusText: 'text-red-400',
+            },
+            starting_soon: {
+              text: 'ALKAMASSA',
+              dot: 'bg-yellow-400',
+              border: 'border-yellow-500/50',
+              bg: 'bg-gradient-to-b from-yellow-900/25 to-slate-900',
+              statusText: 'text-yellow-400',
+            },
+            free: {
+              text: 'VAPAA',
+              dot: 'bg-emerald-500',
+              border: 'border-emerald-500/40',
+              bg: 'bg-gradient-to-b from-emerald-900/25 to-slate-900',
+              statusText: 'text-emerald-400',
+            },
+          }[status.type];
+
+          return (
+            <div className={`rounded-2xl p-3 border ${styles.border} ${styles.bg} shadow-xl flex flex-col min-h-0`}>
+              <div className="shrink-0 mb-3">
+                <h3 className="text-lg font-bold truncate text-center">{room.name}</h3>
+                <div className="flex items-center justify-center gap-2 mt-1.5">
+                  <span className={`inline-block w-3 h-3 rounded-full ${styles.dot} ${status.type !== 'busy' ? 'animate-pulse' : ''}`}></span>
+                  <span className={`text-sm font-bold tracking-wide ${styles.statusText}`}>{styles.text}</span>
+                </div>
+                <div className="text-xs text-slate-400 text-center mt-1 truncate">
+                  {status.detail}
+                </div>
+              </div>
+
+              <VerticalTimeline bookings={bookings} currentTime={currentTime} />
+            </div>
+          );
+        }
+
+        function RoomBookingView({ currentTime }) {
+          const [data, setData] = useState(null);
+          const [error, setError] = useState(null);
+
+          useEffect(() => {
+            const fetchData = async () => {
+              try {
+                const res = await fetch(`./varaukset.json?nocache=${Date.now()}`);
+                if (!res.ok) throw new Error("Varaustiedostoa ei löydy");
+                const json = await res.json();
+                setData(json);
+                setError(null);
+              } catch (e) {
+                console.error("Varausten haku epäonnistui:", e);
+                setError(e.message);
+              }
+            };
+            fetchData();
+            const t = setInterval(fetchData, 60000);
+            return () => clearInterval(t);
+          }, []);
+
+          if (!data) {
+            return (
+              <div className="h-full bg-slate-800/30 rounded-2xl border border-slate-700 flex items-center justify-center text-slate-500 p-8">
+                <p>{error ? `Varaustietoja ei saatavilla (${error})` : 'Ladataan varaustilannetta…'}</p>
+              </div>
+            );
+          }
+
+          const updatedTime = new Date(data.updatedAt);
+
+          return (
+            <div className="h-full flex flex-col gap-3 min-h-0">
+              <div className="flex items-end justify-between shrink-0 px-1">
+                <div className="flex items-center gap-3">
+                  <ICONS.Door className="w-7 h-7 text-blue-400" />
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-100">Työhuoneet</h2>
+                    <p className="text-xs text-slate-400">Päivän varaustilanne</p>
+                  </div>
+                </div>
+                <div className="text-xs text-slate-500">
+                  Päivitetty {updatedTime.toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
+              <div className="grid grid-cols-4 gap-3 flex-1 min-h-0">
+                {data.rooms.map(room => (
+                  <RoomCard key={room.email} room={room} currentTime={currentTime} />
+                ))}
+              </div>
+            </div>
+          );
+        }
+
+        // --- NYSSE-NÄKYMÄ ---
+        function NysseView() {
+          return (
+            <div className="h-full flex flex-col gap-3 min-h-0">
+              <div className="flex items-end justify-between shrink-0 px-1">
+                <div className="flex items-center gap-3">
+                  <ICONS.Bus className="w-7 h-7 text-blue-400" />
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-100">Nysse</h2>
+                    <p className="text-xs text-slate-400">Lähipysäkit</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 min-h-0 bg-white rounded-2xl overflow-hidden border border-slate-700 shadow-xl">
+                <iframe
+                  src="https://tremonitori.digitransit.fi/view?cont=Bw9FQAJ759PJGqMQS59ACA=="
+                  className="w-full h-full border-0"
+                  title="Tampere Monitori"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          );
+        }
+
+        // --- LOMAKUVA-NÄKYMÄ ---
+        function HolidayView({ imagePath }) {
+          return (
+            <div className="h-full flex flex-col gap-3 min-h-0">
+              <div className="flex items-end justify-between shrink-0 px-1">
+                <div className="flex items-center gap-3">
+                  <ICONS.Palm className="w-7 h-7 text-blue-400" />
+                  <div>
+                    <h2 className="text-2xl font-bold text-slate-100">Lomatiedot</h2>
+                    <p className="text-xs text-slate-400">Kesän ilmoitukset</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 min-h-0 bg-slate-950 rounded-2xl overflow-hidden border border-slate-700 shadow-xl flex items-center justify-center p-4">
+                <img
+                  src={imagePath}
+                  alt="Lomatiedot"
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+            </div>
+          );
+        }
+
+        // --- KIERTÄVÄ OIKEA PALSTA ---
+        function CyclingRightColumn({ currentTime }) {
+          const [holidayImagePath, setHolidayImagePath] = useState(null);
+          const [currentViewIndex, setCurrentViewIndex] = useState(0);
+
+          // Tarkista lomakuvan olemassaolo (kokeile eri päätteitä)
+          useEffect(() => {
+            let cancelled = false;
+
+            const checkImage = () => {
+              const cacheBuster = Date.now();
+              const tryNext = (i) => {
+                if (cancelled) return;
+                if (i >= HOLIDAY_IMAGE_EXTS.length) {
+                  setHolidayImagePath(null);
+                  return;
+                }
+                const path = `${HOLIDAY_IMAGE_BASENAME}.${HOLIDAY_IMAGE_EXTS[i]}`;
+                const img = new Image();
+                img.onload = () => {
+                  if (!cancelled) setHolidayImagePath(`${path}?v=${cacheBuster}`);
+                };
+                img.onerror = () => tryNext(i + 1);
+                img.src = `${path}?v=${cacheBuster}`;
+              };
+              tryNext(0);
+            };
+
+            checkImage();
+            const id = setInterval(checkImage, 300000); // 5 min välein
+            return () => { cancelled = true; clearInterval(id); };
+          }, []);
+
+          // Rakenna näkymälista
+          const views = useMemo(() => {
+            const v = ['rooms', 'nysse'];
+            if (holidayImagePath) v.push('holiday');
+            return v;
+          }, [holidayImagePath]);
+
+          // Varmista että indeksi pysyy rajoissa jos lomakuva lisätään/poistetaan
+          useEffect(() => {
+            if (currentViewIndex >= views.length) {
+              setCurrentViewIndex(0);
+            }
+          }, [views.length, currentViewIndex]);
+
+          // Vaihda näkymää tasaisin välein
+          useEffect(() => {
+            if (views.length <= 1) return;
+            const timer = setInterval(() => {
+              setCurrentViewIndex(prev => (prev + 1) % views.length);
+            }, CYCLE_INTERVAL_MS);
+            return () => clearInterval(timer);
+          }, [views.length]);
+
+          const currentView = views[currentViewIndex] || 'rooms';
+
+          return (
+            <div className="h-full flex flex-col min-h-0 relative">
+              {/* Näkymien päällekkäinen kerros — kaikki mountattuina, aktiivinen näkyy */}
+              <div className="flex-1 min-h-0 relative">
+                <div
+                  className={`absolute inset-0 transition-opacity duration-700 ${
+                    currentView === 'rooms' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                  }`}
+                >
+                  <RoomBookingView currentTime={currentTime} />
+                </div>
+                <div
+                  className={`absolute inset-0 transition-opacity duration-700 ${
+                    currentView === 'nysse' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                  }`}
+                >
+                  <NysseView />
+                </div>
+                {holidayImagePath && (
+                  <div
+                    className={`absolute inset-0 transition-opacity duration-700 ${
+                      currentView === 'holiday' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                    }`}
+                  >
+                    <HolidayView imagePath={holidayImagePath} />
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        // --- PÄÄKOMPONENTTI ---
+        function InfoDisplay() {
+          const [time, setTime] = useState(new Date());
+          const [weather, setWeather] = useState(null);
+          const [loadingWeather, setLoadingWeather] = useState(true);
+          
+          // Palautteiden tilat
+          const [feedbackData, setFeedbackData] = useState([]);
+          const [currentFeedbackIndex, setCurrentFeedbackIndex] = useState(0);
+
+          // 1. Kello: Päivitä joka sekunti
+          useEffect(() => {
+            const timer = setInterval(() => setTime(new Date()), 1000);
+            return () => clearInterval(timer);
+          }, []);
+
+          // 2. Palautteet: Hae JSON-tiedostosta
+          useEffect(() => {
+            const fetchFeedbacks = async () => {
+                try {
+                    const response = await fetch(`./palautteet.json?nocache=${new Date().getTime()}`); 
+                    if (!response.ok) throw new Error("Tiedostoa ei löytynyt");
+                    const data = await response.json();
+                    
+                    if (Array.isArray(data) && data.length > 0) {
+                        setFeedbackData(data);
+                    }
+                } catch (error) {
+                    console.error("Virhe palautteiden haussa:", error);
+                    if (feedbackData.length === 0) {
+                        setFeedbackData([{Palaute: "Odotetaan palautteita palvelimelta...", nimimerkki: "Järjestelmä"}]);
+                    }
+                }
+            };
+
+            fetchFeedbacks();
+            const refreshInterval = setInterval(fetchFeedbacks, 60000);
+            return () => clearInterval(refreshInterval);
+          }, []);
+
+          // 3. Palautekaruselli: Pyöritä 20 sekunnin välein
+          useEffect(() => {
+            if (feedbackData.length > 0) {
+                const feedbackTimer = setInterval(() => {
+                  setCurrentFeedbackIndex((prev) => (prev + 1) % feedbackData.length);
+                }, 20000);
+                return () => clearInterval(feedbackTimer);
+            }
+          }, [feedbackData]); 
+
+          // 4. Sää: Hae Open-Meteosta (Tampere)
+          useEffect(() => {
+            const fetchWeather = async () => {
+              try {
+                const response = await fetch(
+                  'https://api.open-meteo.com/v1/forecast?latitude=61.498&longitude=23.761&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&wind_speed_unit=ms&timezone=auto'
+                );
+                const data = await response.json();
+                if (data.current) {
+                    setWeather(data.current);
+                    setLoadingWeather(false);
+                }
+              } catch (error) {
+                console.error(error);
+                setLoadingWeather(false);
+              }
+            };
+            fetchWeather();
+            const weatherTimer = setInterval(fetchWeather, 600000);
+            return () => clearInterval(weatherTimer);
+          }, []);
+
+          // Apufunktiot
+          const formatDate = (date) => {
+            const dateString = date.toLocaleDateString('fi-FI', { 
+              weekday: 'long', 
+              day: 'numeric', 
+              month: 'long' 
+            });
+            if (dateString.length === 0) return dateString;
+            return dateString.charAt(0).toUpperCase() + dateString.slice(1);
+          };
+          
+          const formatTime = (date) => date.toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' });
+
+          const currentFeedback = feedbackData.length > 0 ? feedbackData[currentFeedbackIndex] : {Palaute: "", nimimerkki: ""};
+
+          return (
+            <div className="h-full bg-slate-900 text-slate-100 p-4 font-sans overflow-hidden flex flex-col gap-4">
+              
+              {/* YLÄPALKKI */}
+              <header className="flex justify-between items-center bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-lg backdrop-blur-sm shrink-0">
+                <div className="flex items-center gap-4">
+                  <ICONS.Calendar className="w-8 h-8 text-blue-400" />
+                  <span className="text-3xl font-light">{formatDate(time)}</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <ICONS.Clock className="w-14 h-14 text-blue-400" />
+                  <span className="text-6xl font-bold tracking-wider">{formatTime(time)}</span>
+                </div>
+              </header>
+
+              {/* GRID */}
+              <main className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-0">
+                
+                {/* VASEN SARAKE */}
+                <div className="lg:col-span-1 flex flex-col gap-4 h-full">
+                  
+                  {/* Sääkortti */}
+                  <div className="bg-gradient-to-br from-blue-900/40 to-slate-900 rounded-2xl p-6 border border-blue-500/20 shadow-xl flex flex-col relative overflow-hidden h-[45%]">
+                      <div className="flex items-center gap-2 text-blue-400 mb-4 relative z-10">
+                        <ICONS.MapPin className="w-5 h-5" />
+                        <h2 className="text-xl font-semibold uppercase tracking-widest">Sää Tampere</h2>
+                      </div>
+
+                      {loadingWeather ? (
+                        <div className="animate-pulse flex flex-col gap-4">
+                          <div className="h-12 w-12 bg-slate-700 rounded-full"></div>
+                          <div className="h-8 w-32 bg-slate-700 rounded"></div>
+                        </div>
+                      ) : weather ? (
+                        <div className="space-y-4 relative z-10">
+                          <div className="flex items-center gap-6">
+                            {getWeatherIcon(weather.weather_code)}
+                            <div>
+                              <div className="text-5xl font-bold">{Math.round(weather.temperature_2m)}°C</div>
+                              <div className="text-lg text-slate-400">{getWeatherDescription(weather.weather_code)}</div>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-3 mt-4">
+                            <div className="bg-slate-900/50 p-3 rounded-xl border border-blue-500/10">
+                              <div className="flex items-center gap-2 text-slate-400 mb-1">
+                                <ICONS.Wind className="w-4 h-4" /> <span className="text-xs">Tuuli</span>
+                              </div>
+                              <span className="text-xl font-semibold">{weather.wind_speed_10m} <span className="text-xs font-normal">m/s</span></span>
+                            </div>
+                            <div className="bg-slate-900/50 p-3 rounded-xl border border-blue-500/10">
+                              <div className="flex items-center gap-2 text-slate-400 mb-1">
+                                <ICONS.Droplets className="w-4 h-4" /> <span className="text-xs">Tuntuu</span>
+                              </div>
+                              <span className="text-xl font-semibold">{Math.round(weather.apparent_temperature)}°</span>
+                            </div>
+                          </div>
+                        </div>
+                      ) : ( <p>Säätietoja ei saatavilla.</p> )}
+                      <div className="mt-4 text-xs text-slate-500 text-center relative z-10">
+                        Säätiedot päivittyvät automaattisesti 10 minuutin välein
+                      </div>
+                  </div>
+
+                 {/* Palautekortti */}
+                  <div className="bg-gradient-to-br from-blue-900/40 to-slate-900 rounded-2xl p-6 border border-blue-500/20 shadow-xl flex flex-col justify-center relative overflow-hidden group h-[55%]">
+                    <ICONS.ThumbsUp className="absolute -right-4 -bottom-4 w-32 h-32 text-blue-500/5 rotate-12" />
+                    
+                    <div key={currentFeedbackIndex} className="relative z-10 animate-fade-in flex flex-col h-full justify-between">
+                      <div className="flex items-center gap-2 text-blue-400 mb-2">
+                        <ICONS.ThumbsUp className="w-5 h-5" />
+                        <h2 className="text-xs font-bold uppercase tracking-widest">Positiiviset palautteet</h2>
+                      </div>
+                      
+                      <blockquote className="text-xl md:text-2xl font-light italic leading-relaxed text-slate-100 my-auto">
+                        "{currentFeedback.Palaute}"
+                      </blockquote>
+                      
+                      <div className="flex items-center gap-3 mt-4">
+                        <div className="w-8 h-8 rounded-full bg-blue-600/30 flex items-center justify-center text-blue-400 font-bold text-sm">
+                          {currentFeedback.nimimerkki ? currentFeedback.nimimerkki.charAt(0).toUpperCase() : '?'}
+                        </div>
+                        <cite className="text-slate-400 not-italic font-medium">
+                          {currentFeedback.nimimerkki}
+                        </cite>
+                      </div>
+                    </div>
+
+                    {/* Pisteet alhaalla */}
+                    <div className="absolute bottom-4 right-4 flex gap-1">
+                      {feedbackData.map((_, idx) => (
+                        <div key={idx} className={`h-1 rounded-full transition-all duration-300 ${idx === currentFeedbackIndex ? 'w-4 bg-blue-500' : 'w-1 bg-slate-700'}`} />
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
+
+                {/* OIKEA SARAKE: KIERTÄVÄ NÄKYMÄ */}
+                <div className="lg:col-span-2 h-full min-h-0">
+                  <CyclingRightColumn currentTime={time} />
+                </div>
+
+              </main>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<InfoDisplay />);
+    </script>
+</body>
+</html>
