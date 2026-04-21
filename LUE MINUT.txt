@@ -1,0 +1,10 @@
+# Tähän kansioon tulevat infonäytön kiertävät kuvanäkymät.
+#
+# Lomatiedot:
+#   Nimeä tiedosto "lomatiedot.png" (tai .jpg/.jpeg/.webp) ja sijoita
+#   tähän kansioon. Infonäyttö löytää sen automaattisesti 5 min sisällä
+#   ja lisää sen 20 sekunnin näkymäkiertoon.
+#
+# Poistaminen:
+#   Kun lomat ovat ohi, poista tiedosto repostasi. Infonäyttö havaitsee
+#   poiston automaattisesti ja palaa 2-näkymän kiertoon (työhuoneet + Nysse).

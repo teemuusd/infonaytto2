@@ -1,0 +1,52 @@
+name: Päivitä huoneiden varaukset
+
+on:
+  # Ajetaan arkipäivisin 5 min välein klo 7-19 Helsingin aikaa
+  # (cron käyttää UTC:tä, joten kesällä 04-16, talvella 05-17)
+  schedule:
+    - cron: '*/5 4-17 * * 1-5'
+  # Mahdollistaa myös manuaalisen käynnistyksen Actions-välilehdeltä
+  workflow_dispatch:
+
+# Tarvitaan varaukset.json-tiedoston committaamiseen
+permissions:
+  contents: write
+
+# Estetään päällekkäiset ajot
+concurrency:
+  group: fetch-room-bookings
+  cancel-in-progress: false
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Aseta Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Asenna riippuvuudet
+        run: pip install requests
+
+      - name: Hae varaukset Microsoft Graph API:sta
+        env:
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+        run: python scripts/fetch_room_bookings.py
+
+      - name: Commit ja push jos muutoksia
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add varaukset.json
+          if git diff --staged --quiet; then
+            echo "Ei muutoksia — ei committia."
+          else
+            git commit -m "Päivitä huoneiden varaustilanne [skip ci]"
+            git push
+          fi
