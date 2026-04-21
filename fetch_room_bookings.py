@@ -25,10 +25,10 @@ import requests
 # Vaihda nämä oman organisaationne huoneiden postilaatikko-osoitteisiin
 # ja näytettäviin nimiin.
 ROOMS = [
-    {"email": "neukkari1@esimerkki.fi", "name": "Neukkari 1"},
-    {"email": "neukkari2@esimerkki.fi", "name": "Neukkari 2"},
-    {"email": "neukkari3@esimerkki.fi", "name": "Neukkari 3"},
-    {"email": "neukkari4@esimerkki.fi", "name": "Neukkari 4"},
+    {"email": "aava@proviko.fi", "name": "Aava"},
+    {"email": "virta@proviko.fi", "name": "Virta"},
+    {"email": "tyyni@proviko.fi", "name": "Tyyni"},
+    {"email": "kaiku@proviko.fi", "name": "Kaiku"},
 ]
 
 LOCAL_TZ = ZoneInfo("Europe/Helsinki")
