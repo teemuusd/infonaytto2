@@ -53,6 +53,8 @@
             Door: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M18 22V8a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><circle cx="10" cy="13" r="1" fill="currentColor"/></svg>,
             Bus: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h19"/><path d="M4 17h.01"/><path d="M20 17h.01"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>,
             Palm: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35z"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></svg>,
+            Eye: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
+            Moon: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
         };
 
         // --- SÄÄLOGIIKKA ---
@@ -158,7 +160,7 @@
                     ? 'bg-red-500/80 border-red-400'
                     : isPast
                     ? 'bg-slate-600/30 border-slate-600/50'
-                    : 'bg-red-500/40 border-red-500/60';
+                    : 'bg-red-500/75 border-red-400';
                   const textClass = isPast ? 'text-slate-400' : 'text-white';
 
                   return (
@@ -280,14 +282,24 @@
 
         // --- NYSSE-NÄKYMÄ ---
         function NysseView() {
+          const [filterMode, setFilterMode] = useState('normal');
+          const getFilterStyle = () => filterMode === 'grayscale' ? 'grayscale(100%) contrast(110%) brightness(90%)' : 'none';
+
           return (
-            <div className="h-full bg-white rounded-2xl overflow-hidden border border-slate-700 shadow-xl">
-              <iframe
-                src="https://tremonitori.digitransit.fi/view?cont=Bw9FQAJ759PJGqMQS59ACA=="
-                className="w-full h-full border-0"
-                title="Tampere Monitori"
-                allowFullScreen
-              />
+            <div className="h-full relative bg-black rounded-2xl overflow-hidden border border-slate-700 shadow-xl">
+              <div className="absolute top-4 right-4 z-20 pointer-events-auto flex gap-7 p-3 bg-slate-900 rounded-lg backdrop-blur-sm border border-slate-700">
+                <button onClick={() => setFilterMode('normal')} className={`p-3 rounded transition-colors ${filterMode === 'normal' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}><ICONS.Eye size={18} /></button>
+                <button onClick={() => setFilterMode('grayscale')} className={`p-3 rounded transition-colors ${filterMode === 'grayscale' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-white'}`}><ICONS.Moon size={18} /></button>
+              </div>
+
+              <div className="w-full h-full bg-white" style={{ filter: getFilterStyle(), transition: 'filter 0.5s ease' }}>
+                <iframe
+                  src="https://tremonitori.digitransit.fi/view?cont=Bw9FQAJ759PJGqMQS59ACA=="
+                  className="w-full h-full border-0"
+                  title="Tampere Monitori"
+                  allowFullScreen
+                />
+              </div>
             </div>
           );
         }
@@ -420,7 +432,22 @@
                     const data = await response.json();
                     
                     if (Array.isArray(data) && data.length > 0) {
-                        setFeedbackData(data);
+                        // Suodata vanhentuneet palautteet pois.
+                        // Palaute näytetään jos:
+                        //  - sillä on "pysyva": true, TAI
+                        //  - sillä ei ole "vanhenee"-kenttää (taaksepäin yhteensopivuus), TAI
+                        //  - nykyhetki on ennen "vanhenee"-päivämäärää
+                        const now = new Date();
+                        const active = data.filter(p => {
+                            if (p.pysyva === true) return true;
+                            if (!p.vanhenee) return true;
+                            const expiry = new Date(p.vanhenee);
+                            if (isNaN(expiry.getTime())) return true; // virheellinen pvm → näytä varmuudeksi
+                            return now < expiry;
+                        });
+                        if (active.length > 0) {
+                            setFeedbackData(active);
+                        }
                     }
                 } catch (error) {
                     console.error("Virhe palautteiden haussa:", error);
