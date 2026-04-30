@@ -1,10 +1,16 @@
 {
-  "updatedAt": "2026-04-29T22:06:43+03:00",
+  "updatedAt": "2026-04-30T08:07:07+03:00",
   "rooms": [
     {
       "name": "Aava",
       "email": "aava@proviko.fi",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-04-30T08:00:00+03:00",
+          "end": "2026-04-30T08:45:00+03:00",
+          "organizerInitials": "O.O."
+        }
+      ],
       "error": null
     },
     {
@@ -16,13 +22,25 @@
     {
       "name": "Tyyni",
       "email": "tyyni@proviko.fi",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-04-30T10:00:00+03:00",
+          "end": "2026-04-30T12:00:00+03:00",
+          "organizerInitials": "K.R."
+        }
+      ],
       "error": null
     },
     {
       "name": "Kaiku",
       "email": "kaiku@proviko.fi",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-04-30T10:00:00+03:00",
+          "end": "2026-04-30T12:00:00+03:00",
+          "organizerInitials": "S.N."
+        }
+      ],
       "error": null
     }
   ]
