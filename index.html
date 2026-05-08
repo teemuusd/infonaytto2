@@ -268,12 +268,12 @@
 
         const getWeatherDescription = (code) => {
           const codes = {
-            0: 'Selkeää', 1: 'Melkein selkeää', 2: 'Puolipilvistä', 3: 'Pilvistä', 45: 'Sumua',
+            0: 'Selkeää', 1: 'Melko selkeää', 2: 'Puolipilvistä', 3: 'Pilvistä', 45: 'Sumua',
             48: 'Huurteista sumua', 51: 'Kevyttä tihkua', 53: 'Tihkusadetta', 55: 'Tiheää tihkua',
             61: 'Kevyttä sadetta', 63: 'Sadetta', 65: 'Voimakasta sadetta',
             66: 'Räntää', 67: 'Voimakasta räntää',
             71: 'Kevyttä lumisadetta', 73: 'Lumisadetta', 75: 'Voimakasta lumisadetta',
-            77: 'Lumijyväsiä',
+            77: 'Rakeita',
             80: 'Sadekuuroja', 81: 'Sadekuuroja', 82: 'Voimakkaita sadekuuroja',
             85: 'Lumikuuroja', 86: 'Voimakkaita lumikuuroja',
             95: 'Ukkosta', 96: 'Voimakasta ukkosta', 99: 'Voimakasta ukkosta',
@@ -680,7 +680,7 @@
                 } catch (error) {
                     console.error("Virhe palautteiden haussa:", error);
                     if (feedbackData.length === 0) {
-                        setFeedbackData([{Palaute: "Odotetaan palautteita palvelimelta...", nimimerkki: "Järjestelmä"}]);
+                        setFeedbackData([{Palaute: "Voit antaa positiivista palautetta Formsissa lomakkeella 'Positiiviset palautteet', jonka löydät Teams-kanavalta.", nimimerkki: "TJ"}]);
                     }
                 }
             };
