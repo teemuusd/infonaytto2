@@ -58,22 +58,225 @@
         };
 
         // --- SÄÄLOGIIKKA ---
-        const getWeatherIcon = (code) => {
-          const props = { className: "w-12 h-12" };
-          if (code === 0 || code === 1) return <ICONS.Sun {...props} className={`${props.className} text-yellow-400`} />;
-          if (code === 2 || code === 3) return <ICONS.Cloud {...props} className={`${props.className} text-gray-400`} />;
-          if (code >= 51 && code <= 67) return <ICONS.CloudRain {...props} className={`${props.className} text-blue-400`} />;
-          if (code >= 71 && code <= 77) return <ICONS.CloudSnow {...props} className={`${props.className} text-white`} />;
-          if (code >= 95) return <ICONS.CloudRain {...props} className={`${props.className} text-purple-400`} />;
-          return <ICONS.Cloud {...props} className={`${props.className} text-gray-400`} />;
-        };
+        // WeatherIcon: piirtää oikean ikonin Open-Meteon WMO-koodille.
+        // Käytä props: code (numero), size (px-kokoluku, oletus 48)
+        function WeatherIcon({ code, size = 48 }) {
+          const s = size;
+          const sw = s <= 28 ? 1.8 : 1.5; // ohuempi viiva pienillä, kun rendaus pikselöi vähemmän
+          // Selkeää
+          if (code === 0 || code === 1) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#facc15" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2"/><path d="M12 20v2"/>
+                <path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/>
+                <path d="M2 12h2"/><path d="M20 12h2"/>
+                <path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+              </svg>
+            );
+          }
+          // Puolipilvistä
+          if (code === 2) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5">
+                <circle cx="11" cy="10" r="3.5" stroke="#facc15"/>
+                <path d="M11 4 v1.5 M11 14.5 V16 M5.5 10 H7 M15 10 H16.5 M7 6 l1 1 M14 6 l-1 1" stroke="#facc15"/>
+                <path d="M11 25 L23 25 A4.5 4.5 0 0 0 23.5 16.05 A5.5 5.5 0 0 0 13.2 14.5 A5 5 0 0 0 5 19 A3.5 3.5 0 0 0 5 25 Z" stroke="#cbd5e1" fill="rgba(203,213,225,0.2)"/>
+              </svg>
+            );
+          }
+          // Pilvistä
+          if (code === 3) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 24 L23 24 A5 5 0 0 0 23.5 14.05 A6 6 0 0 0 12 12.5 A5.5 5.5 0 0 0 3 17 A4 4 0 0 0 3 24 Z"/>
+              </svg>
+            );
+          }
+          // Sumua
+          if (code === 45 || code === 48) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="none" stroke="#cbd5e1" strokeWidth="1.8" strokeLinecap="round">
+                <line x1="4" y1="10" x2="28" y2="10"/>
+                <line x1="2" y1="15" x2="26" y2="15"/>
+                <line x1="6" y1="20" x2="30" y2="20"/>
+                <line x1="3" y1="25" x2="24" y2="25"/>
+              </svg>
+            );
+          }
+          // Kevyttä tihkua
+          if (code === 51) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 20 L23 20 A5 5 0 0 0 23.5 10.05 A6 6 0 0 0 12 8.5 A5.5 5.5 0 0 0 3 13 A4 4 0 0 0 3 20 Z"/>
+                <line x1="13" y1="24" x2="13" y2="26" stroke="#60a5fa" strokeWidth="2"/>
+                <line x1="19" y1="24" x2="19" y2="26" stroke="#60a5fa" strokeWidth="2"/>
+              </svg>
+            );
+          }
+          // Tihkusadetta (53, 55)
+          if (code === 53 || code === 55) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 20 L23 20 A5 5 0 0 0 23.5 10.05 A6 6 0 0 0 12 8.5 A5.5 5.5 0 0 0 3 13 A4 4 0 0 0 3 20 Z"/>
+                <line x1="11" y1="23" x2="11" y2="26" stroke="#60a5fa" strokeWidth="2"/>
+                <line x1="16" y1="23" x2="16" y2="26" stroke="#60a5fa" strokeWidth="2"/>
+                <line x1="21" y1="23" x2="21" y2="26" stroke="#60a5fa" strokeWidth="2"/>
+              </svg>
+            );
+          }
+          // Kevyttä sadetta (61)
+          if (code === 61) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18 L23 18 A5 5 0 0 0 23.5 8.05 A6 6 0 0 0 12 6.5 A5.5 5.5 0 0 0 3 11 A4 4 0 0 0 3 18 Z"/>
+                <line x1="11" y1="22" x2="9" y2="27" stroke="#60a5fa" strokeWidth="2"/>
+                <line x1="20" y1="22" x2="18" y2="27" stroke="#60a5fa" strokeWidth="2"/>
+              </svg>
+            );
+          }
+          // Sadetta (63)
+          if (code === 63) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18 L23 18 A5 5 0 0 0 23.5 8.05 A6 6 0 0 0 12 6.5 A5.5 5.5 0 0 0 3 11 A4 4 0 0 0 3 18 Z"/>
+                <line x1="9" y1="22" x2="7" y2="27" stroke="#60a5fa" strokeWidth="2"/>
+                <line x1="15" y1="22" x2="13" y2="27" stroke="#60a5fa" strokeWidth="2"/>
+                <line x1="21" y1="22" x2="19" y2="27" stroke="#60a5fa" strokeWidth="2"/>
+              </svg>
+            );
+          }
+          // Voimakasta sadetta (65)
+          if (code === 65) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 17 L23 17 A5 5 0 0 0 23.5 7.05 A6 6 0 0 0 12 5.5 A5.5 5.5 0 0 0 3 10 A4 4 0 0 0 3 17 Z"/>
+                <line x1="8" y1="20" x2="6" y2="26" stroke="#60a5fa" strokeWidth="2.5"/>
+                <line x1="13" y1="20" x2="11" y2="26" stroke="#60a5fa" strokeWidth="2.5"/>
+                <line x1="18" y1="20" x2="16" y2="26" stroke="#60a5fa" strokeWidth="2.5"/>
+                <line x1="23" y1="20" x2="21" y2="26" stroke="#60a5fa" strokeWidth="2.5"/>
+              </svg>
+            );
+          }
+          // Räntää (66, 67)
+          if (code === 66 || code === 67) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18 L23 18 A5 5 0 0 0 23.5 8.05 A6 6 0 0 0 12 6.5 A5.5 5.5 0 0 0 3 11 A4 4 0 0 0 3 18 Z"/>
+                <line x1="11" y1="22" x2="9" y2="27" stroke="#60a5fa" strokeWidth="2"/>
+                <circle cx="20" cy="25" r="1.5" fill="#ffffff" stroke="none"/>
+              </svg>
+            );
+          }
+          // Kevyttä lumisadetta (71)
+          if (code === 71) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 18 L23 18 A5 5 0 0 0 23.5 8.05 A6 6 0 0 0 12 6.5 A5.5 5.5 0 0 0 3 11 A4 4 0 0 0 3 18 Z"/>
+                <circle cx="11" cy="24.5" r="1.3" fill="#ffffff" stroke="none"/>
+                <circle cx="20" cy="24.5" r="1.3" fill="#ffffff" stroke="none"/>
+              </svg>
+            );
+          }
+          // Lumisadetta (73)
+          if (code === 73) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 17 L23 17 A5 5 0 0 0 23.5 7.05 A6 6 0 0 0 12 5.5 A5.5 5.5 0 0 0 3 10 A4 4 0 0 0 3 17 Z"/>
+                <circle cx="9" cy="23" r="1.3" fill="#ffffff" stroke="none"/>
+                <circle cx="16" cy="25" r="1.3" fill="#ffffff" stroke="none"/>
+                <circle cx="23" cy="23" r="1.3" fill="#ffffff" stroke="none"/>
+              </svg>
+            );
+          }
+          // Voimakasta lumisadetta (75)
+          if (code === 75) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 16 L23 16 A5 5 0 0 0 23.5 6.05 A6 6 0 0 0 12 4.5 A5.5 5.5 0 0 0 3 9 A4 4 0 0 0 3 16 Z"/>
+                <circle cx="8" cy="22" r="1.5" fill="#ffffff" stroke="none"/>
+                <circle cx="14" cy="25" r="1.5" fill="#ffffff" stroke="none"/>
+                <circle cx="20" cy="22" r="1.5" fill="#ffffff" stroke="none"/>
+                <circle cx="26" cy="25" r="1.5" fill="#ffffff" stroke="none"/>
+              </svg>
+            );
+          }
+          // Lumijyväsiä (77)
+          if (code === 77) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="16" y1="6" x2="16" y2="26"/>
+                <line x1="6" y1="16" x2="26" y2="16"/>
+                <line x1="9" y1="9" x2="23" y2="23"/>
+                <line x1="23" y1="9" x2="9" y2="23"/>
+                <line x1="13" y1="6" x2="16" y2="9"/>
+                <line x1="19" y1="6" x2="16" y2="9"/>
+                <line x1="13" y1="26" x2="16" y2="23"/>
+                <line x1="19" y1="26" x2="16" y2="23"/>
+              </svg>
+            );
+          }
+          // Sadekuuroja (80, 81, 82)
+          if (code === 80 || code === 81 || code === 82) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 17 L23 17 A5 5 0 0 0 23.5 7.05 A6 6 0 0 0 12 5.5 A5.5 5.5 0 0 0 3 10 A4 4 0 0 0 3 17 Z"/>
+                <line x1="9" y1="20" x2="6" y2="27" stroke="#60a5fa" strokeWidth="2.5"/>
+                <line x1="16" y1="20" x2="13" y2="27" stroke="#60a5fa" strokeWidth="2.5"/>
+                <line x1="23" y1="20" x2="20" y2="27" stroke="#60a5fa" strokeWidth="2.5"/>
+              </svg>
+            );
+          }
+          // Lumikuuroja (85, 86)
+          if (code === 85 || code === 86) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 17 L23 17 A5 5 0 0 0 23.5 7.05 A6 6 0 0 0 12 5.5 A5.5 5.5 0 0 0 3 10 A4 4 0 0 0 3 17 Z"/>
+                <circle cx="9" cy="23" r="1.5" fill="#ffffff" stroke="none"/>
+                <circle cx="16" cy="25" r="1.5" fill="#ffffff" stroke="none"/>
+                <circle cx="23" cy="23" r="1.5" fill="#ffffff" stroke="none"/>
+              </svg>
+            );
+          }
+          // Ukkosta (95)
+          if (code === 95) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 16 L23 16 A5 5 0 0 0 23.5 6.05 A6 6 0 0 0 12 4.5 A5.5 5.5 0 0 0 3 9 A4 4 0 0 0 3 16 Z"/>
+                <path d="M16 18 L13 24 L16 24 L14 29 L20 21 L17 21 L20 18 Z" fill="#facc15" stroke="#facc15" strokeWidth="0.5"/>
+              </svg>
+            );
+          }
+          // Voimakasta ukkosta (96, 99)
+          if (code === 96 || code === 99) {
+            return (
+              <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 15 L23 15 A5 5 0 0 0 23.5 5.05 A6 6 0 0 0 12 3.5 A5.5 5.5 0 0 0 3 8 A4 4 0 0 0 3 15 Z"/>
+                <path d="M14 17 L11 23 L14 23 L12 28 L18 20 L15 20 L18 17 Z" fill="#facc15" stroke="#facc15" strokeWidth="0.5"/>
+                <line x1="22" y1="20" x2="20" y2="26" stroke="#60a5fa" strokeWidth="2"/>
+                <line x1="26" y1="20" x2="24" y2="26" stroke="#60a5fa" strokeWidth="2"/>
+              </svg>
+            );
+          }
+          // Tuntematon — pilvi-ikoni
+          return (
+            <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 24 L23 24 A5 5 0 0 0 23.5 14.05 A6 6 0 0 0 12 12.5 A5.5 5.5 0 0 0 3 17 A4 4 0 0 0 3 24 Z"/>
+            </svg>
+          );
+        }
 
         const getWeatherDescription = (code) => {
           const codes = {
             0: 'Selkeää', 1: 'Melkein selkeää', 2: 'Puolipilvistä', 3: 'Pilvistä', 45: 'Sumua',
             48: 'Huurteista sumua', 51: 'Kevyttä tihkua', 53: 'Tihkusadetta', 55: 'Tiheää tihkua',
-            61: 'Kevyttä sadetta', 63: 'Sadetta', 65: 'Voimakasta sadetta', 71: 'Kevyttä lumisadetta',
-            73: 'Lumisadetta', 75: 'Voimakasta lumisadetta', 95: 'Ukkosta',
+            61: 'Kevyttä sadetta', 63: 'Sadetta', 65: 'Voimakasta sadetta',
+            66: 'Räntää', 67: 'Voimakasta räntää',
+            71: 'Kevyttä lumisadetta', 73: 'Lumisadetta', 75: 'Voimakasta lumisadetta',
+            77: 'Lumijyväsiä',
+            80: 'Sadekuuroja', 81: 'Sadekuuroja', 82: 'Voimakkaita sadekuuroja',
+            85: 'Lumikuuroja', 86: 'Voimakkaita lumikuuroja',
+            95: 'Ukkosta', 96: 'Voimakasta ukkosta', 99: 'Voimakasta ukkosta',
           };
           return codes[code] || 'Tuntematon';
         };
@@ -169,20 +372,32 @@
                     : { backgroundColor: 'rgba(28, 87, 207, 0.75)', borderColor: 'rgba(28, 87, 207, 0.95)' };
                   const textClass = isPast ? 'text-slate-400' : 'text-white';
 
+                  // Pisteet pois nimikirjaimista jos ne ovat muotoa "E.E." -> "EE"
+                  const cleanInitials = b.organizerInitials ? b.organizerInitials.replace(/\./g, '') : '';
+
                   return (
                     <div
                       key={i}
                       className={`absolute left-1 right-1 border rounded ${textClass} flex flex-col overflow-hidden px-1.5 py-1`}
                       style={{ top: `${top}%`, height: `${height}%`, ...slotStyle }}
                     >
-                      <div className="text-xs font-bold tabular-nums leading-tight">
-                        {fmtHM(b.start)}–{fmtHM(b.end)}
-                      </div>
-                      {b.organizerInitials && height > 4 && (
-                        <div className="text-xs opacity-80 leading-tight mt-0.5">
-                          {b.organizerInitials}
+                      <div className="flex items-center gap-1.5 leading-tight">
+                        {cleanInitials && (
+                          <div
+                            className={`shrink-0 inline-flex items-center justify-center rounded-full text-[10px] font-bold border ${
+                              isPast
+                                ? 'bg-slate-700/60 border-slate-500/60 text-slate-300'
+                                : 'bg-white/20 border-white/40 text-white'
+                            }`}
+                            style={{ width: '18px', height: '18px' }}
+                          >
+                            {cleanInitials}
+                          </div>
+                        )}
+                        <div className="text-xs font-bold tabular-nums">
+                          {fmtHM(b.start)}–{fmtHM(b.end)}
                         </div>
-                      )}
+                      </div>
                     </div>
                   );
                 })}
@@ -423,6 +638,7 @@
         function InfoDisplay() {
           const [time, setTime] = useState(new Date());
           const [weather, setWeather] = useState(null);
+          const [hourly, setHourly] = useState(null);
           const [loadingWeather, setLoadingWeather] = useState(true);
           
           // Palautteiden tilat
@@ -489,12 +705,30 @@
             const fetchWeather = async () => {
               try {
                 const response = await fetch(
-                  'https://api.open-meteo.com/v1/forecast?latitude=61.498&longitude=23.761&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&wind_speed_unit=ms&timezone=auto'
+                  'https://api.open-meteo.com/v1/forecast?latitude=61.498&longitude=23.761&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&forecast_days=2&wind_speed_unit=ms&timezone=auto'
                 );
                 const data = await response.json();
                 if (data.current) {
                     setWeather(data.current);
                     setLoadingWeather(false);
+                }
+                if (data.hourly && Array.isArray(data.hourly.time)) {
+                    // Etsi nykyhetkeä lähinnä oleva tunti, ja kerää siitä eteenpäin 4 ennustetta 2 h välein
+                    const now = new Date();
+                    const idxNow = data.hourly.time.findIndex(t => new Date(t) > now);
+                    const startIdx = idxNow === -1 ? 0 : idxNow;
+                    const points = [];
+                    for (let i = 1; i <= 4; i++) {
+                      const j = startIdx + (i * 2) - 1; // +2h, +4h, +6h, +8h
+                      if (j < data.hourly.time.length) {
+                        points.push({
+                          time: data.hourly.time[j],
+                          temp: data.hourly.temperature_2m[j],
+                          code: data.hourly.weather_code[j],
+                        });
+                      }
+                    }
+                    setHourly(points);
                 }
               } catch (error) {
                 console.error(error);
@@ -556,12 +790,31 @@
                         </div>
                       ) : weather ? (
                         <div className="space-y-4 relative z-10">
-                          <div className="flex items-center gap-6">
-                            {getWeatherIcon(weather.weather_code)}
-                            <div>
-                              <div className="text-5xl font-bold">{Math.round(weather.temperature_2m)}°C</div>
-                              <div className="text-lg text-slate-400">{getWeatherDescription(weather.weather_code)}</div>
+                          <div className="grid grid-cols-2 gap-4 items-center">
+                            {/* Vasen: nykyhetki */}
+                            <div className="flex items-center gap-4">
+                              <WeatherIcon code={weather.weather_code} size={48} />
+                              <div>
+                                <div className="text-5xl font-bold leading-none">{Math.round(weather.temperature_2m)}°C</div>
+                                <div className="text-sm text-slate-400 mt-1">{getWeatherDescription(weather.weather_code)}</div>
+                              </div>
                             </div>
+
+                            {/* Oikea: tunneittainen ennuste */}
+                            {hourly && hourly.length > 0 && (
+                              <div>
+                                <div className="text-xs text-slate-500 mb-2 tracking-wider">SEURAAVAT TUNNIT</div>
+                                <div className="grid grid-cols-4 gap-1">
+                                  {hourly.map((h, i) => (
+                                    <div key={i} className="flex flex-col items-center gap-1 bg-slate-900/50 px-1 py-2 rounded-lg border border-blue-500/10">
+                                      <div className="text-xs text-slate-400">{new Date(h.time).getHours()}</div>
+                                      <WeatherIcon code={h.code} size={22} />
+                                      <div className="text-xs font-semibold">{Math.round(h.temp)}°</div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                           <div className="grid grid-cols-2 gap-3 mt-4">
                             <div className="bg-slate-900/50 p-3 rounded-xl border border-blue-500/10">
