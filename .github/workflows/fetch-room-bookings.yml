@@ -1,10 +1,16 @@
 name: Päivitä huoneiden varaukset
 
 on:
-  # Ajetaan arkipäivisin 5 min välein klo 7-19 Helsingin aikaa
-  # (cron käyttää UTC:tä, joten kesällä 04-16, talvella 05-17)
+  # Ajetaan arkipäivisin klo 7-17 Helsingin aikaa, 5 min välein.
+  # Cron käyttää UTC-aikaa: kesäaikana Helsinki = UTC+3, talviaikana UTC+2.
+  # Kesällä 4-14 UTC = 7-17 Helsinki. Talvella 5-15 UTC = 7-17 Helsinki.
+  # Käytetään molempia, niin ajat ovat oikein vuoden ympäri.
+  # Kaksi cron-riviä rinnakkain: GitHubin ruuhkasta huolimatta yleensä toinen onnistuu.
   schedule:
-    - cron: '*/5 4-17 * * 1-5'
+    - cron: '*/5 4-14 * * 1-5'    # kesäaika 7-17 Helsinki, parittomina minuutteina (0,5,10,...)
+    - cron: '2-57/5 4-14 * * 1-5' # kesäaika 7-17 Helsinki, parillisina minuutteina (2,7,12,...)
+    - cron: '*/5 5-15 * * 1-5'    # talviaika 7-17 Helsinki
+    - cron: '2-57/5 5-15 * * 1-5' # talviaika 7-17 Helsinki, vuoroviestein
   # Mahdollistaa myös manuaalisen käynnistyksen Actions-välilehdeltä
   workflow_dispatch:
 
