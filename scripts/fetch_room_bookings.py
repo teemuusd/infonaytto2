@@ -50,7 +50,7 @@ def get_access_token(tenant_id: str, client_id: str, client_secret: str) -> str:
 
 
 def get_initials(name: str) -> str:
-    """Palauttaa nimestä nimikirjaimet, esim. 'Matti Virtanen' -> 'M.V.'"""
+    """Palauttaa nimestä nimikirjaimet, esim. 'Esko Esimerkki' -> 'EE'"""
     if not name:
         return ""
     # Poista mahdolliset sulut ja niiden sisältö (esim. osastotieto nimen perässä)
@@ -59,8 +59,8 @@ def get_initials(name: str) -> str:
     if not parts:
         return ""
     if len(parts) == 1:
-        return f"{parts[0][0].upper()}."
-    return f"{parts[0][0].upper()}.{parts[-1][0].upper()}."
+        return parts[0][0].upper()
+    return f"{parts[0][0].upper()}{parts[-1][0].upper()}"
 
 
 def parse_graph_datetime(dt_str: str, tz_name: str) -> datetime:
