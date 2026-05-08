@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-08T19:05:33+03:00",
+  "updatedAt": "2026-05-08T20:13:36+03:00",
   "rooms": [
     {
       "name": "Aava",
@@ -8,22 +8,22 @@
         {
           "start": "2026-05-08T08:30:00+03:00",
           "end": "2026-05-08T09:00:00+03:00",
-          "organizerInitials": "J.L."
+          "organizerInitials": "JL"
         },
         {
           "start": "2026-05-08T10:00:00+03:00",
           "end": "2026-05-08T10:30:00+03:00",
-          "organizerInitials": "J.K."
+          "organizerInitials": "JK"
         },
         {
           "start": "2026-05-08T13:00:00+03:00",
           "end": "2026-05-08T14:00:00+03:00",
-          "organizerInitials": "E.B."
+          "organizerInitials": "EB"
         },
         {
           "start": "2026-05-08T14:00:00+03:00",
           "end": "2026-05-08T15:00:00+03:00",
-          "organizerInitials": "E.B."
+          "organizerInitials": "EB"
         }
       ],
       "error": null
@@ -35,7 +35,7 @@
         {
           "start": "2026-05-08T14:00:00+03:00",
           "end": "2026-05-08T15:00:00+03:00",
-          "organizerInitials": "T.J."
+          "organizerInitials": "TJ"
         }
       ],
       "error": null
@@ -53,7 +53,7 @@
         {
           "start": "2026-05-08T08:00:00+03:00",
           "end": "2026-05-08T08:30:00+03:00",
-          "organizerInitials": "E.A."
+          "organizerInitials": "EA"
         }
       ],
       "error": null
