@@ -96,6 +96,11 @@
             }
             return { type: 'free', detail: `Vapaa ${fmtHM(next.start)} asti`, booking: next };
           }
+          // Ei käynnissä olevaa eikä tulevaa varausta - tarkista onko päivän aikana ollut varauksia
+          const hasPastBookings = bookings.some(b => new Date(b.end) <= now);
+          if (hasPastBookings) {
+            return { type: 'free', detail: 'Vapaa loppupäivän', booking: null };
+          }
           return { type: 'free', detail: 'Vapaa koko päivän', booking: null };
         }
 
@@ -459,7 +464,7 @@
                 } catch (error) {
                     console.error("Virhe palautteiden haussa:", error);
                     if (feedbackData.length === 0) {
-                        setFeedbackData([{Palaute: "Voit antaa positiivista palautetta lomakkeella 'Positiiviset palautteet', joka löytyy Provikon Teams-kanavalta", nimimerkki: "TJ"}]);
+                        setFeedbackData([{Palaute: "Odotetaan palautteita palvelimelta...", nimimerkki: "Järjestelmä"}]);
                     }
                 }
             };
