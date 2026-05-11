@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-11T11:25:33+03:00",
+  "updatedAt": "2026-05-11T13:37:59+03:00",
   "rooms": [
     {
       "name": "Aava",
@@ -50,7 +50,13 @@
     {
       "name": "Kaiku",
       "email": "kaiku@proviko.fi",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-05-11T14:00:00+03:00",
+          "end": "2026-05-11T15:00:00+03:00",
+          "organizerInitials": "EA"
+        }
+      ],
       "error": null
     }
   ]
