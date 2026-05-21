@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-21T14:51:08+03:00",
+  "updatedAt": "2026-05-21T16:50:56+03:00",
   "rooms": [
     {
       "name": "Aava",
@@ -28,7 +28,13 @@
     {
       "name": "Tyyni",
       "email": "tyyni@proviko.fi",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-05-21T15:00:00+03:00",
+          "end": "2026-05-21T16:00:00+03:00",
+          "organizerInitials": "HM"
+        }
+      ],
       "error": null
     },
     {
