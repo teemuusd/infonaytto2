@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-03T12:22:10+03:00",
+  "updatedAt": "2026-06-03T12:53:38+03:00",
   "rooms": [
     {
       "name": "Aava",
@@ -16,7 +16,13 @@
     {
       "name": "Virta",
       "email": "virta@proviko.fi",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-06-03T13:00:00+03:00",
+          "end": "2026-06-03T14:00:00+03:00",
+          "organizerInitials": "AL"
+        }
+      ],
       "error": null
     },
     {
