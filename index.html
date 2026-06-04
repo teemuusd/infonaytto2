@@ -8,11 +8,11 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
+
     <style>
         body { margin: 0; overflow: hidden; background-color: #0f172a; }
         #root { height: 100vh; display: flex; flex-direction: column; }
-        
+
         /* Häivytysanimaatio tekstille */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -47,23 +47,22 @@
             Cloud: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19H12a5 5 0 0 1-4.72-3.85c-.09-.59-.12-1.2-.12-1.8a5 5 0 0 1 10-2z"/></svg>,
             CloudRain: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 13V9a6 6 0 0 0-12 0v4"/><line x1="16" y1="17" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="8" y1="17" x2="8" y2="21"/></svg>,
             CloudSnow: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 13V9a6 6 0 0 0-12 0v4"/><path d="M10 21v-3.5"/><path d="M14 21v-3.5"/><path d="M12 18v-3.5"/></svg>,
-            Wind: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 7L5 12h5.5l-.5 5 4.5-5h-5.5l.5-5z"/><path d="M21 17h-7"/></svg>,
-            Droplets: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13.5 8.5l-.5.5 1 1.5-1 1.5 1 1.5-1 1.5 1 1.5M10.5 8.5l.5.5-1 1.5 1 1.5-1 1.5 1 1.5M7.5 8.5l-.5.5 1 1.5-1 1.5 1 1.5-1 1.5"/></svg>,
+            Wind: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>,
+            Droplets: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 14.686V4a2 2 0 0 0-4 0v10.686a4 4 0 1 0 4 0z"/><line x1="12" y1="9" x2="12" y2="14"/></svg>,
             ThumbsUp: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3z"/><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>,
             Door: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"/><path d="M18 22V8a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><circle cx="10" cy="13" r="1" fill="currentColor"/></svg>,
             Bus: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 6v6"/><path d="M16 6v6"/><path d="M2 12h19"/><path d="M4 17h.01"/><path d="M20 17h.01"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>,
             Palm: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 8c0-2.76-2.46-5-5.5-5S2 5.24 2 8h2l1-1 1 1h4"/><path d="M13 7.14A5.82 5.82 0 0 1 16.5 6c3.04 0 5.5 2.24 5.5 5h-3l-1-1-1 1h-3"/><path d="M5.89 9.71c-2.15 2.15-2.3 5.47-.35 7.43l4.24-4.25.7-.7.71-.71 2.12-2.12c-1.95-1.96-5.27-1.8-7.42.35z"/><path d="M11 15.5c.5 2.5-.17 4.5-1 6.5h4c2-5.5-.5-12-1-14"/></svg>,
             Eye: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>,
             Moon: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
+            Cake: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>,
+            Quote: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>,
         };
 
         // --- SÄÄLOGIIKKA ---
-        // WeatherIcon: piirtää oikean ikonin Open-Meteon WMO-koodille.
-        // Käytä props: code (numero), size (px-kokoluku, oletus 48)
         function WeatherIcon({ code, size = 48 }) {
           const s = size;
-          const sw = s <= 28 ? 1.8 : 1.5; // ohuempi viiva pienillä, kun rendaus pikselöi vähemmän
-          // Selkeää
+          const sw = s <= 28 ? 1.8 : 1.5;
           if (code === 0 || code === 1) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 24 24" fill="none" stroke="#facc15" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -75,7 +74,6 @@
               </svg>
             );
           }
-          // Puolipilvistä
           if (code === 2) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5">
@@ -85,7 +83,6 @@
               </svg>
             );
           }
-          // Pilvistä
           if (code === 3) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -93,7 +90,6 @@
               </svg>
             );
           }
-          // Sumua
           if (code === 45 || code === 48) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="none" stroke="#cbd5e1" strokeWidth="1.8" strokeLinecap="round">
@@ -104,7 +100,6 @@
               </svg>
             );
           }
-          // Kevyttä tihkua
           if (code === 51) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -114,7 +109,6 @@
               </svg>
             );
           }
-          // Tihkusadetta (53, 55)
           if (code === 53 || code === 55) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -125,7 +119,6 @@
               </svg>
             );
           }
-          // Kevyttä sadetta (61)
           if (code === 61) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -135,7 +128,6 @@
               </svg>
             );
           }
-          // Sadetta (63)
           if (code === 63) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -146,7 +138,6 @@
               </svg>
             );
           }
-          // Voimakasta sadetta (65)
           if (code === 65) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -158,7 +149,6 @@
               </svg>
             );
           }
-          // Räntää (66, 67)
           if (code === 66 || code === 67) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -168,7 +158,6 @@
               </svg>
             );
           }
-          // Kevyttä lumisadetta (71)
           if (code === 71) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -178,7 +167,6 @@
               </svg>
             );
           }
-          // Lumisadetta (73)
           if (code === 73) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -189,7 +177,6 @@
               </svg>
             );
           }
-          // Voimakasta lumisadetta (75)
           if (code === 75) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -201,7 +188,6 @@
               </svg>
             );
           }
-          // Lumijyväsiä (77)
           if (code === 77) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="none" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -209,14 +195,9 @@
                 <line x1="6" y1="16" x2="26" y2="16"/>
                 <line x1="9" y1="9" x2="23" y2="23"/>
                 <line x1="23" y1="9" x2="9" y2="23"/>
-                <line x1="13" y1="6" x2="16" y2="9"/>
-                <line x1="19" y1="6" x2="16" y2="9"/>
-                <line x1="13" y1="26" x2="16" y2="23"/>
-                <line x1="19" y1="26" x2="16" y2="23"/>
               </svg>
             );
           }
-          // Sadekuuroja (80, 81, 82)
           if (code === 80 || code === 81 || code === 82) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -227,7 +208,6 @@
               </svg>
             );
           }
-          // Lumikuuroja (85, 86)
           if (code === 85 || code === 86) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -238,7 +218,6 @@
               </svg>
             );
           }
-          // Ukkosta (95)
           if (code === 95) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -247,7 +226,6 @@
               </svg>
             );
           }
-          // Voimakasta ukkosta (96, 99)
           if (code === 96 || code === 99) {
             return (
               <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
@@ -258,7 +236,6 @@
               </svg>
             );
           }
-          // Tuntematon — pilvi-ikoni
           return (
             <svg xmlns="http://www.w3.org/2000/svg" width={s} height={s} viewBox="0 0 32 32" fill="rgba(203,213,225,0.2)" stroke="#cbd5e1" strokeWidth={sw} strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 24 L23 24 A5 5 0 0 0 23.5 14.05 A6 6 0 0 0 12 12.5 A5.5 5.5 0 0 0 3 17 A4 4 0 0 0 3 24 Z"/>
@@ -299,7 +276,6 @@
             }
             return { type: 'free', detail: `Vapaa ${fmtHM(next.start)} asti`, booking: next };
           }
-          // Ei käynnissä olevaa eikä tulevaa varausta - tarkista onko päivän aikana ollut varauksia
           const hasPastBookings = bookings.some(b => new Date(b.end) <= now);
           if (hasPastBookings) {
             return { type: 'free', detail: 'Vapaa loppupäivän', booking: null };
@@ -322,7 +298,6 @@
 
           return (
             <div className="flex-1 min-h-0 flex gap-1.5">
-              {/* Tuntileima vasemmalla */}
               <div className="relative w-7 text-xs text-slate-500 font-mono shrink-0">
                 {hours.map((h, i) => {
                   const top = (i / (hours.length - 1)) * 100;
@@ -338,9 +313,7 @@
                 })}
               </div>
 
-              {/* Aikajanarata */}
               <div className="flex-1 relative bg-slate-800/40 rounded-lg border border-slate-700/60 overflow-hidden">
-                {/* Tuntien apuviivat */}
                 {hours.slice(1, -1).map((h, i) => {
                   const top = ((i + 1) / (hours.length - 1)) * 100;
                   return (
@@ -352,7 +325,6 @@
                   );
                 })}
 
-                {/* Varausslotit */}
                 {bookings.map((b, i) => {
                   const top = clamp(pct(b.start));
                   const bottom = clamp(pct(b.end));
@@ -364,15 +336,12 @@
                   const isPast = endDate < currentTime;
                   const isCurrent = startDate <= currentTime && currentTime < endDate;
 
-                  // Varausvärit - sininen #1C57CF eri läpinäkyvyyksillä
                   const slotStyle = isCurrent
                     ? { backgroundColor: 'rgba(28, 87, 207, 0.85)', borderColor: 'rgba(28, 87, 207, 1)' }
                     : isPast
                     ? { backgroundColor: 'rgba(71, 85, 105, 0.3)', borderColor: 'rgba(71, 85, 105, 0.5)' }
                     : { backgroundColor: 'rgba(28, 87, 207, 0.75)', borderColor: 'rgba(28, 87, 207, 0.95)' };
                   const textClass = isPast ? 'text-slate-400' : 'text-white';
-
-                  // Pisteet pois nimikirjaimista jos ne ovat muotoa "E.E." -> "EE"
                   const cleanInitials = b.organizerInitials ? b.organizerInitials.replace(/\./g, '') : '';
 
                   return (
@@ -402,7 +371,6 @@
                   );
                 })}
 
-                {/* Nykyinen hetki */}
                 {currentPct > 0 && currentPct < 100 && (
                   <div
                     className="absolute left-0 right-0 flex items-center pointer-events-none z-10"
@@ -495,7 +463,7 @@
           return (
             <div className="h-full grid grid-cols-4 gap-3 min-h-0">
               {data.rooms.map(room => (
-                <RoomCard key={room.email} room={room} currentTime={currentTime} />
+                <RoomCard key={room.name} room={room} currentTime={currentTime} />
               ))}
             </div>
           );
@@ -543,10 +511,8 @@
           const [holidayImagePath, setHolidayImagePath] = useState(null);
           const [currentViewIndex, setCurrentViewIndex] = useState(0);
 
-          // Tarkista lomakuvan olemassaolo (kokeile eri päätteitä)
           useEffect(() => {
             let cancelled = false;
-
             const checkImage = () => {
               const cacheBuster = Date.now();
               const tryNext = (i) => {
@@ -565,29 +531,23 @@
               };
               tryNext(0);
             };
-
             checkImage();
-            const id = setInterval(checkImage, 300000); // 5 min välein
+            const id = setInterval(checkImage, 300000);
             return () => { cancelled = true; clearInterval(id); };
           }, []);
 
-          // Rakenna näkymälista
           const views = useMemo(() => {
-            // Palauta 'nysse' listaan jos haluat Nysse-näkymän takaisin kiertoon:
-            // const v = ['rooms', 'nysse'];
             const v = ['rooms'];
             if (holidayImagePath) v.push('holiday');
             return v;
           }, [holidayImagePath]);
 
-          // Varmista että indeksi pysyy rajoissa jos lomakuva lisätään/poistetaan
           useEffect(() => {
             if (currentViewIndex >= views.length) {
               setCurrentViewIndex(0);
             }
           }, [views.length, currentViewIndex]);
 
-          // Vaihda näkymää tasaisin välein
           useEffect(() => {
             if (views.length <= 1) return;
             const timer = setInterval(() => {
@@ -600,7 +560,6 @@
 
           return (
             <div className="h-full flex flex-col min-h-0 relative">
-              {/* Näkymien päällekkäinen kerros — kaikki mountattuina, aktiivinen näkyy */}
               <div className="flex-1 min-h-0 relative">
                 <div
                   className={`absolute inset-0 transition-opacity duration-700 ${
@@ -609,17 +568,6 @@
                 >
                   <RoomBookingView currentTime={currentTime} />
                 </div>
-                {/* Nysse-näkymä kommentoitu pois — ks. myös 'views'-lista yllä.
-                    Palauta ottamalla kommentit pois ja lisäämällä 'nysse' listaan. */}
-                {/*
-                <div
-                  className={`absolute inset-0 transition-opacity duration-700 ${
-                    currentView === 'nysse' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-                  }`}
-                >
-                  <NysseView />
-                </div>
-                */}
                 {holidayImagePath && (
                   <div
                     className={`absolute inset-0 transition-opacity duration-700 ${
@@ -640,67 +588,83 @@
           const [weather, setWeather] = useState(null);
           const [hourly, setHourly] = useState(null);
           const [loadingWeather, setLoadingWeather] = useState(true);
-          
-          // Palautteiden tilat
-          const [feedbackData, setFeedbackData] = useState([]);
-          const [currentFeedbackIndex, setCurrentFeedbackIndex] = useState(0);
 
-          // 1. Kello: Päivitä joka sekunti
+          // Palautekortin tila
+          const [feedbackData, setFeedbackData] = useState([]);
+          const [namedays, setNamedays] = useState([]);
+          const [dailyQuote, setDailyQuote] = useState(null);
+          const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
+
+          // 1. Kello
           useEffect(() => {
             const timer = setInterval(() => setTime(new Date()), 1000);
             return () => clearInterval(timer);
           }, []);
 
-          // 2. Palautteet: Hae JSON-tiedostosta
+          // 2. Palautteet
           useEffect(() => {
             const fetchFeedbacks = async () => {
-                try {
-                    const response = await fetch(`./palautteet.json?nocache=${new Date().getTime()}`); 
-                    if (!response.ok) throw new Error("Tiedostoa ei löytynyt");
-                    const data = await response.json();
-                    
-                    if (Array.isArray(data) && data.length > 0) {
-                        // Suodata vanhentuneet palautteet pois.
-                        // Palaute näytetään jos:
-                        //  - sillä on "pysyva": true, TAI
-                        //  - sillä ei ole "vanhenee"-kenttää (taaksepäin yhteensopivuus), TAI
-                        //  - nykyhetki on ennen "vanhenee"-päivämäärää
-                        const now = new Date();
-                        const active = data.filter(p => {
-                            if (p.pysyva === true) return true;
-                            if (!p.vanhenee) return true;
-                            const expiry = new Date(p.vanhenee);
-                            if (isNaN(expiry.getTime())) return true; // virheellinen pvm → näytä varmuudeksi
-                            return now < expiry;
-                        });
-                        if (active.length > 0) {
-                            setFeedbackData(active);
-                        }
-                    }
-                } catch (error) {
-                    console.error("Virhe palautteiden haussa:", error);
-                    if (feedbackData.length === 0) {
-                        setFeedbackData([{Palaute: "Voit antaa positiivista palautetta Formsissa lomakkeella 'Positiiviset palautteet', jonka löydät Teams-kanavalta.", nimimerkki: "TJ"}]);
-                    }
+              try {
+                const response = await fetch(`./palautteet.json?nocache=${new Date().getTime()}`);
+                if (!response.ok) throw new Error("Tiedostoa ei löytynyt");
+                const data = await response.json();
+                if (Array.isArray(data) && data.length > 0) {
+                  const now = new Date();
+                  const active = data.filter(p => {
+                    if (p.pysyva === true) return true;
+                    if (!p.vanhenee) return true;
+                    const expiry = new Date(p.vanhenee);
+                    if (isNaN(expiry.getTime())) return true;
+                    return now < expiry;
+                  });
+                  if (active.length > 0) setFeedbackData(active);
                 }
+              } catch (error) {
+                console.error("Virhe palautteiden haussa:", error);
+              }
             };
-
             fetchFeedbacks();
             const refreshInterval = setInterval(fetchFeedbacks, 60000);
             return () => clearInterval(refreshInterval);
           }, []);
 
-          // 3. Palautekaruselli: Pyöritä 20 sekunnin välein
+          // 3. Nimipäivät (nameday.abalin.net)
           useEffect(() => {
-            if (feedbackData.length > 0) {
-                const feedbackTimer = setInterval(() => {
-                  setCurrentFeedbackIndex((prev) => (prev + 1) % feedbackData.length);
-                }, 20000);
-                return () => clearInterval(feedbackTimer);
-            }
-          }, [feedbackData]); 
+            fetch('https://nameday.abalin.net/api/V1/today?country=fi')
+              .then(r => r.json())
+              .then(data => {
+                const raw = data?.namedays?.fi || '';
+                const names = raw.split(',').map(n => n.trim()).filter(Boolean);
+                setNamedays(names);
+              })
+              .catch(e => console.error('Nimipäivät: haku epäonnistui', e));
+          }, []);
 
-          // 4. Sää: Hae Open-Meteosta (Tampere)
+          // 4. Päivän mietelause — sama koko päivä (localStorage-välimuisti)
+          useEffect(() => {
+            const today = new Date().toDateString();
+            try {
+              const cached = JSON.parse(localStorage.getItem('dailyQuote') || 'null');
+              if (cached && cached.date === today) {
+                setDailyQuote(cached);
+                return;
+              }
+            } catch (_) {}
+
+            fetch('https://api.quotable.io/quotes/random?maxLength=220&tags=wisdom|inspirational|life')
+              .then(r => r.json())
+              .then(data => {
+                const result = Array.isArray(data) ? data[0] : data?.results?.[0];
+                if (result) {
+                  const quote = { text: result.content || result.q, author: result.author || result.a, date: today };
+                  try { localStorage.setItem('dailyQuote', JSON.stringify(quote)); } catch (_) {}
+                  setDailyQuote(quote);
+                }
+              })
+              .catch(e => console.error('Mietelause: haku epäonnistui', e));
+          }, []);
+
+          // 5. Sää
           useEffect(() => {
             const fetchWeather = async () => {
               try {
@@ -709,26 +673,25 @@
                 );
                 const data = await response.json();
                 if (data.current) {
-                    setWeather(data.current);
-                    setLoadingWeather(false);
+                  setWeather(data.current);
+                  setLoadingWeather(false);
                 }
                 if (data.hourly && Array.isArray(data.hourly.time)) {
-                    // Etsi nykyhetkeä lähinnä oleva tunti, ja kerää siitä eteenpäin 4 ennustetta 2 h välein
-                    const now = new Date();
-                    const idxNow = data.hourly.time.findIndex(t => new Date(t) > now);
-                    const startIdx = idxNow === -1 ? 0 : idxNow;
-                    const points = [];
-                    for (let i = 1; i <= 4; i++) {
-                      const j = startIdx + (i * 2) - 1; // +2h, +4h, +6h, +8h
-                      if (j < data.hourly.time.length) {
-                        points.push({
-                          time: data.hourly.time[j],
-                          temp: data.hourly.temperature_2m[j],
-                          code: data.hourly.weather_code[j],
-                        });
-                      }
+                  const now = new Date();
+                  const idxNow = data.hourly.time.findIndex(t => new Date(t) > now);
+                  const startIdx = idxNow === -1 ? 0 : idxNow;
+                  const points = [];
+                  for (let i = 1; i <= 4; i++) {
+                    const j = startIdx + (i * 2) - 1;
+                    if (j < data.hourly.time.length) {
+                      points.push({
+                        time: data.hourly.time[j],
+                        temp: data.hourly.temperature_2m[j],
+                        code: data.hourly.weather_code[j],
+                      });
                     }
-                    setHourly(points);
+                  }
+                  setHourly(points);
                 }
               } catch (error) {
                 console.error(error);
@@ -740,29 +703,49 @@
             return () => clearInterval(weatherTimer);
           }, []);
 
+          // Karusellin kohteet: palautteet + nimipäivät + mietelause
+          const carouselItems = useMemo(() => {
+            if (feedbackData.length === 0) return [];
+            return feedbackData.flatMap(f => {
+              const group = [{ type: 'feedback', data: f }];
+              if (namedays.length > 0) group.push({ type: 'nameday', data: namedays });
+              if (dailyQuote) group.push({ type: 'quote', data: dailyQuote });
+              return group;
+            });
+          }, [feedbackData, namedays, dailyQuote]);
+
+          // Karusellin pyöritys
+          useEffect(() => {
+            if (carouselItems.length <= 1) return;
+            const timer = setInterval(() => {
+              setCurrentCarouselIndex(prev => (prev + 1) % carouselItems.length);
+            }, CYCLE_INTERVAL_MS);
+            return () => clearInterval(timer);
+          }, [carouselItems.length]);
+
           // Apufunktiot
           const formatDate = (date) => {
-            const dateString = date.toLocaleDateString('fi-FI', { 
-              weekday: 'long', 
-              day: 'numeric', 
-              month: 'long' 
+            const dateString = date.toLocaleDateString('fi-FI', {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long'
             });
             if (dateString.length === 0) return dateString;
             return dateString.charAt(0).toUpperCase() + dateString.slice(1);
           };
-          
-          const formatTime = (date) => date.toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' });
 
-          const currentFeedback = feedbackData.length > 0 ? feedbackData[currentFeedbackIndex] : {Palaute: "", nimimerkki: ""};
+          const formatTime = (date) => date.toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+
+          const currentItem = carouselItems[currentCarouselIndex] || null;
 
           return (
             <div className="h-full bg-slate-900 text-slate-100 p-4 font-sans overflow-hidden flex flex-col gap-4">
-              
+
               {/* YLÄPALKKI */}
               <header className="flex justify-between items-center bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-lg backdrop-blur-sm shrink-0">
                 <div className="flex items-center gap-4">
                   <ICONS.Calendar className="w-8 h-8 text-blue-400" />
-                  <span className="text-3xl font-light">{formatDate(time)}</span>
+                  <span className="text-3xl font-light uppercase text-white">{formatDate(time)}</span>
                 </div>
                 <div className="flex items-center gap-4">
                   <ICONS.Clock className="w-14 h-14 text-blue-400" />
@@ -772,100 +755,158 @@
 
               {/* GRID */}
               <main className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-0">
-                
+
                 {/* VASEN SARAKE */}
                 <div className="lg:col-span-1 flex flex-col gap-4 h-full">
-                  
+
                   {/* Sääkortti */}
                   <div className="bg-gradient-to-br from-blue-900/40 to-slate-900 rounded-2xl p-6 border border-blue-500/20 shadow-xl flex flex-col relative overflow-hidden h-[45%]">
-                      <div className="flex items-center gap-2 text-blue-400 mb-4 relative z-10">
-                        <ICONS.MapPin className="w-5 h-5" />
-                        <h2 className="text-xl font-semibold uppercase tracking-widest">Sää Tampere</h2>
+                    <div className="flex items-center gap-2 text-blue-400 mb-4 relative z-10">
+                      <ICONS.MapPin className="w-5 h-5" />
+                      <h2 className="text-xl font-semibold uppercase tracking-widest">Sää Tampere</h2>
+                    </div>
+
+                    {loadingWeather ? (
+                      <div className="animate-pulse flex flex-col gap-4">
+                        <div className="h-12 w-12 bg-slate-700 rounded-full"></div>
+                        <div className="h-8 w-32 bg-slate-700 rounded"></div>
                       </div>
-
-                      {loadingWeather ? (
-                        <div className="animate-pulse flex flex-col gap-4">
-                          <div className="h-12 w-12 bg-slate-700 rounded-full"></div>
-                          <div className="h-8 w-32 bg-slate-700 rounded"></div>
-                        </div>
-                      ) : weather ? (
-                        <div className="space-y-4 relative z-10">
-                          <div className="grid grid-cols-2 gap-4 items-center">
-                            {/* Vasen: nykyhetki */}
-                            <div className="flex items-center gap-4">
-                              <WeatherIcon code={weather.weather_code} size={48} />
-                              <div>
-                                <div className="text-5xl font-bold leading-none">{Math.round(weather.temperature_2m)}°C</div>
-                                <div className="text-sm text-slate-400 mt-1">{getWeatherDescription(weather.weather_code)}</div>
-                              </div>
-                            </div>
-
-                            {/* Oikea: tunneittainen ennuste */}
-                            {hourly && hourly.length > 0 && (
-                              <div>
-                                <div className="text-xs text-slate-500 mb-2 tracking-wider">SEURAAVAT TUNNIT</div>
-                                <div className="grid grid-cols-4 gap-1">
-                                  {hourly.map((h, i) => (
-                                    <div key={i} className="flex flex-col items-center gap-1 bg-slate-900/50 px-1 py-2 rounded-lg border border-blue-500/10">
-                                      <div className="text-xs text-slate-400">{new Date(h.time).getHours()}</div>
-                                      <WeatherIcon code={h.code} size={22} />
-                                      <div className="text-xs font-semibold">{Math.round(h.temp)}°</div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                          <div className="grid grid-cols-2 gap-3 mt-4">
-                            <div className="bg-slate-900/50 p-3 rounded-xl border border-blue-500/10">
-                              <div className="flex items-center gap-2 text-slate-400 mb-1">
-                                <ICONS.Wind className="w-4 h-4" /> <span className="text-xs">Tuuli</span>
-                              </div>
-                              <span className="text-xl font-semibold">{weather.wind_speed_10m} <span className="text-xs font-normal">m/s</span></span>
-                            </div>
-                            <div className="bg-slate-900/50 p-3 rounded-xl border border-blue-500/10">
-                              <div className="flex items-center gap-2 text-slate-400 mb-1">
-                                <ICONS.Droplets className="w-4 h-4" /> <span className="text-xs">Tuntuu</span>
-                              </div>
-                              <span className="text-xl font-semibold">{Math.round(weather.apparent_temperature)}°</span>
+                    ) : weather ? (
+                      <div className="space-y-4 relative z-10">
+                        <div className="grid grid-cols-2 gap-4 items-center">
+                          <div className="flex items-center gap-4 justify-center">
+                            <WeatherIcon code={weather.weather_code} size={48} />
+                            <div>
+                              <div className="text-5xl font-bold leading-none">{Math.round(weather.temperature_2m)}°C</div>
+                              <div className="text-sm text-slate-400 mt-1">{getWeatherDescription(weather.weather_code)}</div>
                             </div>
                           </div>
+                          {hourly && hourly.length > 0 && (
+                            <div>
+                              <div className="text-xs text-slate-500 mb-2 tracking-wider text-center">SEURAAVAT TUNNIT</div>
+                              <div className="grid grid-cols-4 gap-1">
+                                {hourly.map((h, i) => (
+                                  <div key={i} className="flex flex-col items-center gap-1 bg-slate-900/50 px-1 py-2 rounded-lg border border-blue-500/10">
+                                    <div className="text-xs text-slate-400">{new Date(h.time).getHours()}</div>
+                                    <WeatherIcon code={h.code} size={22} />
+                                    <div className="text-xs font-semibold">{Math.round(h.temp)}°</div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      ) : ( <p>Säätietoja ei saatavilla.</p> )}
-                      <div className="mt-4 text-xs text-slate-500 text-center relative z-10">
-                        Säätiedot päivittyvät automaattisesti 10 minuutin välein
+                        <div className="grid grid-cols-2 gap-3 mt-4">
+                          <div className="bg-slate-900/50 p-3 rounded-xl border border-blue-500/10">
+                            <div className="flex items-center gap-2 text-slate-400 mb-1">
+                              <ICONS.Wind className="w-4 h-4" /> <span className="text-xs">Tuuli</span>
+                            </div>
+                            <span className="text-xl font-semibold block text-center">{weather.wind_speed_10m} <span className="text-xs font-normal">m/s</span></span>
+                          </div>
+                          <div className="bg-slate-900/50 p-3 rounded-xl border border-blue-500/10">
+                            <div className="flex items-center gap-2 text-slate-400 mb-1">
+                              <ICONS.Droplets className="w-4 h-4" /> <span className="text-xs">Tuntuu</span>
+                            </div>
+                            <span className="text-xl font-semibold block text-center">{Math.round(weather.apparent_temperature)}°</span>
+                          </div>
+                        </div>
                       </div>
+                    ) : (<p>Säätietoja ei saatavilla.</p>)}
+                    <div className="mt-4 text-xs text-slate-500 text-center relative z-10">
+                      Säätiedot päivittyvät 10 minuutin välein
+                    </div>
                   </div>
 
-                 {/* Palautekortti */}
+                  {/* Palautekortti — nimipäivät ja mietelause samassa karuselissa */}
                   <div className="bg-gradient-to-br from-blue-900/40 to-slate-900 rounded-2xl p-6 border border-blue-500/20 shadow-xl flex flex-col justify-center relative overflow-hidden group h-[55%]">
-                    <ICONS.ThumbsUp className="absolute -right-4 -bottom-4 w-32 h-32 text-blue-500/5 rotate-12" />
-                    
-                    <div key={currentFeedbackIndex} className="relative z-10 animate-fade-in flex flex-col h-full justify-between">
-                      <div className="flex items-center gap-2 text-blue-400 mb-2">
-                        <ICONS.ThumbsUp className="w-5 h-5" />
-                        <h2 className="text-xs font-bold uppercase tracking-widest">Positiiviset palautteet</h2>
-                      </div>
-                      
-                      <blockquote className="text-xl md:text-2xl font-light italic leading-relaxed text-slate-100 my-auto">
-                        "{currentFeedback.Palaute}"
-                      </blockquote>
-                      
-                      <div className="flex items-center gap-3 mt-4">
-                        <div className="w-8 h-8 rounded-full bg-blue-600/30 flex items-center justify-center text-blue-400 font-bold text-sm">
-                          {currentFeedback.nimimerkki ? currentFeedback.nimimerkki.charAt(0).toUpperCase() : '?'}
-                        </div>
-                        <cite className="text-slate-400 not-italic font-medium">
-                          {currentFeedback.nimimerkki}
-                        </cite>
-                      </div>
+
+                    {/* Taustakoriste */}
+                    {(!currentItem || currentItem.type === 'feedback') && (
+                      <ICONS.ThumbsUp className="absolute -right-4 -bottom-4 w-32 h-32 text-blue-500/5 rotate-12" />
+                    )}
+                    {currentItem?.type === 'nameday' && (
+                      <ICONS.Cake className="absolute -right-4 -bottom-4 w-32 h-32 text-purple-500/5 rotate-12" />
+                    )}
+                    {currentItem?.type === 'quote' && (
+                      <ICONS.Quote className="absolute -right-4 -bottom-4 w-32 h-32 text-emerald-500/5 rotate-12" />
+                    )}
+
+                    {/* Sisältö */}
+                    <div key={currentCarouselIndex} className="relative z-10 animate-fade-in flex flex-col h-full justify-between">
+
+                      {/* PALAUTENÄKYMÄ */}
+                      {(!currentItem || currentItem.type === 'feedback') && (() => {
+                        const fb = currentItem?.data || { Palaute: '', nimimerkki: '' };
+                        return (
+                          <>
+                            <div className="flex items-center gap-2 text-blue-400 mb-2">
+                              <ICONS.ThumbsUp className="w-5 h-5" />
+                              <h2 className="text-xs font-bold uppercase tracking-widest">Positiiviset palautteet</h2>
+                            </div>
+                            <blockquote className="text-xl md:text-2xl font-light italic leading-relaxed text-slate-100 my-auto">
+                              "{fb.Palaute}"
+                            </blockquote>
+                            <div className="flex items-center gap-3 mt-4">
+                              <div className="w-8 h-8 rounded-full bg-blue-600/30 flex items-center justify-center text-blue-400 font-bold text-sm">
+                                {fb.nimimerkki ? fb.nimimerkki.charAt(0).toUpperCase() : '?'}
+                              </div>
+                              <cite className="text-slate-400 not-italic font-medium">{fb.nimimerkki}</cite>
+                            </div>
+                          </>
+                        );
+                      })()}
+
+                      {/* NIMIPÄIVÄNÄKYMÄ */}
+                      {currentItem?.type === 'nameday' && (
+                        <>
+                          <div className="flex items-center gap-2 text-purple-400 mb-2">
+                            <ICONS.Cake className="w-5 h-5" />
+                            <h2 className="text-xs font-bold uppercase tracking-widest">Päivän nimipäivät</h2>
+                          </div>
+                          <div className="my-auto">
+                            {currentItem.data.map((name, i) => (
+                              <div key={i} className="text-3xl md:text-4xl font-bold text-slate-100 leading-snug">
+                                {name}
+                              </div>
+                            ))}
+                          </div>
+                          <div className="text-sm text-slate-400 mt-4">
+                            Onnittelut nimipäiväsankareille! 🎉
+                          </div>
+                        </>
+                      )}
+
+                      {/* MIETELAUSENÄKYMÄ */}
+                      {currentItem?.type === 'quote' && (
+                        <>
+                          <div className="flex items-center gap-2 text-emerald-400 mb-2">
+                            <ICONS.Quote className="w-5 h-5" />
+                            <h2 className="text-xs font-bold uppercase tracking-widest">Päivän mietelause</h2>
+                          </div>
+                          <blockquote className="text-lg md:text-xl font-light italic leading-relaxed text-slate-100 my-auto">
+                            "{currentItem.data.text}"
+                          </blockquote>
+                          <div className="flex items-center gap-3 mt-4">
+                            <div className="w-8 h-8 rounded-full bg-emerald-600/30 flex items-center justify-center text-emerald-400 font-bold text-sm">
+                              {currentItem.data.author ? currentItem.data.author.charAt(0).toUpperCase() : '?'}
+                            </div>
+                            <cite className="text-slate-400 not-italic font-medium">— {currentItem.data.author}</cite>
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     {/* Pisteet alhaalla */}
                     <div className="absolute bottom-4 right-4 flex gap-1">
-                      {feedbackData.map((_, idx) => (
-                        <div key={idx} className={`h-1 rounded-full transition-all duration-300 ${idx === currentFeedbackIndex ? 'w-4 bg-blue-500' : 'w-1 bg-slate-700'}`} />
-                      ))}
+                      {carouselItems.map((item, idx) => {
+                        const activeColor = item.type === 'nameday' ? 'bg-purple-500' : item.type === 'quote' ? 'bg-emerald-500' : 'bg-blue-500';
+                        return (
+                          <div
+                            key={idx}
+                            className={`h-1 rounded-full transition-all duration-300 ${idx === currentCarouselIndex ? `w-4 ${activeColor}` : 'w-1 bg-slate-700'}`}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
 
