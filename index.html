@@ -591,8 +591,6 @@
 
           // Palautekortin tila
           const [feedbackData, setFeedbackData] = useState([]);
-          const [namedays, setNamedays] = useState([]);
-          const [dailyQuote, setDailyQuote] = useState(null);
           const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0);
 
           // 1. Kello
@@ -628,43 +626,7 @@
             return () => clearInterval(refreshInterval);
           }, []);
 
-          // 3. Nimipäivät (nameday.abalin.net)
-          useEffect(() => {
-            fetch('https://nameday.abalin.net/api/V1/today?country=fi')
-              .then(r => r.json())
-              .then(data => {
-                const raw = data?.namedays?.fi || '';
-                const names = raw.split(',').map(n => n.trim()).filter(Boolean);
-                setNamedays(names);
-              })
-              .catch(e => console.error('Nimipäivät: haku epäonnistui', e));
-          }, []);
-
-          // 4. Päivän mietelause — sama koko päivä (localStorage-välimuisti)
-          useEffect(() => {
-            const today = new Date().toDateString();
-            try {
-              const cached = JSON.parse(localStorage.getItem('dailyQuote') || 'null');
-              if (cached && cached.date === today) {
-                setDailyQuote(cached);
-                return;
-              }
-            } catch (_) {}
-
-            fetch('https://api.quotable.io/quotes/random?maxLength=220&tags=wisdom|inspirational|life')
-              .then(r => r.json())
-              .then(data => {
-                const result = Array.isArray(data) ? data[0] : data?.results?.[0];
-                if (result) {
-                  const quote = { text: result.content || result.q, author: result.author || result.a, date: today };
-                  try { localStorage.setItem('dailyQuote', JSON.stringify(quote)); } catch (_) {}
-                  setDailyQuote(quote);
-                }
-              })
-              .catch(e => console.error('Mietelause: haku epäonnistui', e));
-          }, []);
-
-          // 5. Sää
+          // 3. Sää
           useEffect(() => {
             const fetchWeather = async () => {
               try {
@@ -703,16 +665,17 @@
             return () => clearInterval(weatherTimer);
           }, []);
 
-          // Karusellin kohteet: palautteet + nimipäivät + mietelause
+          // Ohjepalautte näkyy aina karusellin viimeisenä
+          const INSTRUCTION_FEEDBACK = {
+            Palaute: "Voit antaa positiivista palautetta Formsissa lomakkeella 'Positiiviset palautteet', jonka löydät Teams-kanavalta.",
+            nimimerkki: "TJ"
+          };
+
+          // Karusellin kohteet: palautteet
           const carouselItems = useMemo(() => {
-            if (feedbackData.length === 0) return [];
-            return feedbackData.flatMap(f => {
-              const group = [{ type: 'feedback', data: f }];
-              if (namedays.length > 0) group.push({ type: 'nameday', data: namedays });
-              if (dailyQuote) group.push({ type: 'quote', data: dailyQuote });
-              return group;
-            });
-          }, [feedbackData, namedays, dailyQuote]);
+            const allFeedbacks = [...feedbackData, INSTRUCTION_FEEDBACK];
+            return allFeedbacks.map(f => ({ type: 'feedback', data: f }));
+          }, [feedbackData]);
 
           // Karusellin pyöritys
           useEffect(() => {
@@ -817,25 +780,13 @@
                     </div>
                   </div>
 
-                  {/* Palautekortti — nimipäivät ja mietelause samassa karuselissa */}
+                  {/* Palautekortti */}
                   <div className="bg-gradient-to-br from-blue-900/40 to-slate-900 rounded-2xl p-6 border border-blue-500/20 shadow-xl flex flex-col justify-center relative overflow-hidden group h-[55%]">
 
-                    {/* Taustakoriste */}
-                    {(!currentItem || currentItem.type === 'feedback') && (
-                      <ICONS.ThumbsUp className="absolute -right-4 -bottom-4 w-32 h-32 text-blue-500/5 rotate-12" />
-                    )}
-                    {currentItem?.type === 'nameday' && (
-                      <ICONS.Cake className="absolute -right-4 -bottom-4 w-32 h-32 text-purple-500/5 rotate-12" />
-                    )}
-                    {currentItem?.type === 'quote' && (
-                      <ICONS.Quote className="absolute -right-4 -bottom-4 w-32 h-32 text-emerald-500/5 rotate-12" />
-                    )}
+                    <ICONS.ThumbsUp className="absolute -right-4 -bottom-4 w-32 h-32 text-blue-500/5 rotate-12" />
 
-                    {/* Sisältö */}
                     <div key={currentCarouselIndex} className="relative z-10 animate-fade-in flex flex-col h-full justify-between">
-
-                      {/* PALAUTENÄKYMÄ */}
-                      {(!currentItem || currentItem.type === 'feedback') && (() => {
+                      {(() => {
                         const fb = currentItem?.data || { Palaute: '', nimimerkki: '' };
                         return (
                           <>
@@ -855,58 +806,16 @@
                           </>
                         );
                       })()}
-
-                      {/* NIMIPÄIVÄNÄKYMÄ */}
-                      {currentItem?.type === 'nameday' && (
-                        <>
-                          <div className="flex items-center gap-2 text-purple-400 mb-2">
-                            <ICONS.Cake className="w-5 h-5" />
-                            <h2 className="text-xs font-bold uppercase tracking-widest">Päivän nimipäivät</h2>
-                          </div>
-                          <div className="my-auto">
-                            {currentItem.data.map((name, i) => (
-                              <div key={i} className="text-3xl md:text-4xl font-bold text-slate-100 leading-snug">
-                                {name}
-                              </div>
-                            ))}
-                          </div>
-                          <div className="text-sm text-slate-400 mt-4">
-                            Päivän nimipäivät
-                          </div>
-                        </>
-                      )}
-
-                      {/* MIETELAUSENÄKYMÄ */}
-                      {currentItem?.type === 'quote' && (
-                        <>
-                          <div className="flex items-center gap-2 text-emerald-400 mb-2">
-                            <ICONS.Quote className="w-5 h-5" />
-                            <h2 className="text-xs font-bold uppercase tracking-widest">Päivän mietelause</h2>
-                          </div>
-                          <blockquote className="text-lg md:text-xl font-light italic leading-relaxed text-slate-100 my-auto">
-                            "{currentItem.data.text}"
-                          </blockquote>
-                          <div className="flex items-center gap-3 mt-4">
-                            <div className="w-8 h-8 rounded-full bg-emerald-600/30 flex items-center justify-center text-emerald-400 font-bold text-sm">
-                              {currentItem.data.author ? currentItem.data.author.charAt(0).toUpperCase() : '?'}
-                            </div>
-                            <cite className="text-slate-400 not-italic font-medium">— {currentItem.data.author}</cite>
-                          </div>
-                        </>
-                      )}
                     </div>
 
                     {/* Pisteet alhaalla */}
                     <div className="absolute bottom-4 right-4 flex gap-1">
-                      {carouselItems.map((item, idx) => {
-                        const activeColor = item.type === 'nameday' ? 'bg-purple-500' : item.type === 'quote' ? 'bg-emerald-500' : 'bg-blue-500';
-                        return (
-                          <div
-                            key={idx}
-                            className={`h-1 rounded-full transition-all duration-300 ${idx === currentCarouselIndex ? `w-4 ${activeColor}` : 'w-1 bg-slate-700'}`}
-                          />
-                        );
-                      })}
+                      {carouselItems.map((_, idx) => (
+                        <div
+                          key={idx}
+                          className={`h-1 rounded-full transition-all duration-300 ${idx === currentCarouselIndex ? 'w-4 bg-blue-500' : 'w-1 bg-slate-700'}`}
+                        />
+                      ))}
                     </div>
                   </div>
 
