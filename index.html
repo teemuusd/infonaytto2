@@ -641,7 +641,7 @@
             return () => clearInterval(refreshInterval);
           }, []);
 
-          // 3. Sää (wttr.in — tukee CORS, ilmainen)
+          // 3. Sää (wttr.in — 3h tarkkuus)
           useEffect(() => {
             const fetchWeather = async () => {
               try {
@@ -658,7 +658,6 @@
                 });
                 setLoadingWeather(false);
 
-                // Tuntiennuste: kerätään tänään + huomenna kaikki tunnit, otetaan 4 seuraavaa ~2h välein
                 const now = new Date();
                 const allHourly = [];
                 for (const day of data.weather || []) {
@@ -669,13 +668,9 @@
                     allHourly.push({ time: dt.toISOString(), temp: parseFloat(h.tempC), code: WTTR_TO_WMO[parseInt(h.weatherCode)] ?? 3 });
                   }
                 }
+                // Peräkkäiset pisteet = ~3h välein (wttr.in:n maksimitarkkuus)
                 const future = allHourly.filter(h => new Date(h.time) > now);
-                const points = [];
-                for (let i = 1; i <= 4; i++) {
-                  const idx = Math.min(i * 2 - 1, future.length - 1);
-                  if (idx >= 0) points.push(future[idx]);
-                }
-                setHourly(points);
+                setHourly(future.slice(0, 4));
               } catch (error) {
                 console.error('Sää:', error);
                 setLoadingWeather(false);
