@@ -11,6 +11,7 @@ Ympäristömuuttujat (asetetaan GitHub Secretseinä):
 - AZURE_TENANT_ID
 - AZURE_CLIENT_ID
 - AZURE_CLIENT_SECRET
+- ROOM_EMAILS  (JSON-lista, esim. [{"email":"aava@proviko.fi","name":"Aava"}, ...])
 """
 
 import json
@@ -22,14 +23,17 @@ from zoneinfo import ZoneInfo
 import requests
 
 # --- KONFIGURAATIO ---
-# Vaihda nämä oman organisaationne huoneiden postilaatikko-osoitteisiin
-# ja näytettäviin nimiin.
-ROOMS = [
-    {"email": "aava@proviko.fi", "name": "Aava"},
-    {"email": "virta@proviko.fi", "name": "Virta"},
-    {"email": "tyyni@proviko.fi", "name": "Tyyni"},
-    {"email": "kaiku@proviko.fi", "name": "Kaiku"},
-]
+# Huoneiden sähköpostit ja nimet luetaan ROOM_EMAILS-ympäristömuuttujasta (GitHub Secret).
+# Muoto: [{"email": "huone@esimerkki.fi", "name": "Huone"}, ...]
+_room_emails_raw = os.environ.get("ROOM_EMAILS")
+if not _room_emails_raw:
+    print("VIRHE: Puuttuva ympäristömuuttuja: ROOM_EMAILS", file=sys.stderr)
+    sys.exit(1)
+try:
+    ROOMS = json.loads(_room_emails_raw)
+except json.JSONDecodeError as e:
+    print(f"VIRHE: ROOM_EMAILS ei ole kelvollinen JSON: {e}", file=sys.stderr)
+    sys.exit(1)
 
 LOCAL_TZ = ZoneInfo("Europe/Helsinki")
 OUTPUT_FILE = "varaukset.json"
@@ -53,7 +57,6 @@ def get_initials(name: str) -> str:
     """Palauttaa nimestä nimikirjaimet, esim. 'Esko Esimerkki' -> 'EE'"""
     if not name:
         return ""
-    # Poista mahdolliset sulut ja niiden sisältö (esim. osastotieto nimen perässä)
     clean = name.split("(")[0].split(",")[0].strip()
     parts = [p for p in clean.split() if p and p[0].isalpha()]
     if not parts:
@@ -65,10 +68,8 @@ def get_initials(name: str) -> str:
 
 def parse_graph_datetime(dt_str: str, tz_name: str) -> datetime:
     """Parsii Graph API:n dateTime-kentän aikavyöhykeaidoksi datetimeksi."""
-    # Graph API palauttaa muodon "2026-04-20T10:00:00.0000000" (tarkkuus vaihtelee)
     cleaned = dt_str.split(".")[0].rstrip("Z")
     naive = datetime.fromisoformat(cleaned)
-    # tz_name on esim. "UTC" — liitetään aikavyöhyke
     try:
         tz = ZoneInfo(tz_name)
     except Exception:
@@ -82,7 +83,6 @@ def fetch_room_bookings(access_token: str, room_email: str, start_iso: str, end_
     params = {
         "startDateTime": start_iso,
         "endDateTime": end_iso,
-        # Haetaan vain välttämättömät kentät — ei kokouksen aihetta, kuvausta tms.
         "$select": "start,end,organizer,isCancelled,showAs",
         "$orderby": "start/dateTime",
         "$top": 100,
@@ -97,7 +97,6 @@ def process_events(events):
     """Muuntaa Graphin tapahtumat minimaaliseksi JSON-rakenteeksi."""
     bookings = []
     for e in events:
-        # Ohita perutut ja "free"-statuksella merkityt varaukset
         if e.get("isCancelled"):
             continue
         if e.get("showAs") in ("free", "workingElsewhere"):
@@ -143,12 +142,10 @@ def main():
         print(f"VIRHE: Tokenin haku epäonnistui: {ex}", file=sys.stderr)
         sys.exit(1)
 
-    # Haetaan tältä päivältä Helsingin ajassa
     now_local = datetime.now(LOCAL_TZ)
     day_start = now_local.replace(hour=0, minute=0, second=0, microsecond=0)
     day_end = day_start + timedelta(days=1)
 
-    # Graph API hyväksyy ISO-8601 aikavyöhykeoffsetilla
     start_iso = day_start.isoformat()
     end_iso = day_end.isoformat()
 
@@ -160,21 +157,21 @@ def main():
     for room in ROOMS:
         room_entry = {
             "name": room["name"],
-            "email": room["email"],
+            # Sähköpostia ei kirjoiteta JSON-tiedostoon
             "bookings": [],
             "error": None,
         }
         try:
             events = fetch_room_bookings(token, room["email"], start_iso, end_iso)
             room_entry["bookings"] = process_events(events)
-            print(f"OK  {room['name']} ({room['email']}): {len(room_entry['bookings'])} varausta")
+            print(f"OK  {room['name']}: {len(room_entry['bookings'])} varausta")
         except requests.HTTPError as ex:
             msg = f"HTTP {ex.response.status_code}"
             room_entry["error"] = msg
-            print(f"ERR {room['name']} ({room['email']}): {msg}", file=sys.stderr)
+            print(f"ERR {room['name']}: {msg}", file=sys.stderr)
         except Exception as ex:
             room_entry["error"] = type(ex).__name__
-            print(f"ERR {room['name']} ({room['email']}): {ex}", file=sys.stderr)
+            print(f"ERR {room['name']}: {ex}", file=sys.stderr)
         result["rooms"].append(room_entry)
 
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
