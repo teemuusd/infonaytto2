@@ -2,10 +2,10 @@ name: Päivitä huoneiden varaukset
 
 on:
   schedule:
-    - cron: '*/5 4-14 * * 1-5'    # kesäaika 7-17 Helsinki, parittomina minuutteina (0,5,10,...)
-    - cron: '2-57/5 4-14 * * 1-5' # kesäaika 7-17 Helsinki, parillisina minuutteina (2,7,12,...)
-    - cron: '*/5 5-15 * * 1-5'    # talviaika 7-17 Helsinki
-    - cron: '2-57/5 5-15 * * 1-5' # talviaika 7-17 Helsinki, vuoroviestein
+    - cron: '*/5 2-14 * * 1-5'    # kesäaika: cron UTC 2-14 = Helsinki 5-17 (puskuri viiveelle, tavoite klo 8)
+    - cron: '2-57/5 2-14 * * 1-5' # kesäaika, vuorotteleva
+    - cron: '*/5 3-15 * * 1-5'    # talviaika: cron UTC 3-15 = Helsinki 5-17
+    - cron: '2-57/5 3-15 * * 1-5' # talviaika, vuorotteleva
   workflow_dispatch:
 
 permissions:
