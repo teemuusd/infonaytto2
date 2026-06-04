@@ -1,7 +1,6 @@
 """
 Hakee toimiston työhuoneiden varaukset Microsoft Graph API:sta ja kirjoittaa
 niistä siivotun varaukset.json-tiedoston infonäyttöä varten.
-Hakee myös Tampereen säätiedot wttr.in-palvelusta ja kirjoittaa saatiedot.json-tiedoston.
 
 Ympäristömuuttujat (asetetaan GitHub Secretseinä):
 - AZURE_TENANT_ID
@@ -33,101 +32,6 @@ except json.JSONDecodeError as e:
 
 LOCAL_TZ = ZoneInfo("Europe/Helsinki")
 OUTPUT_FILE = "varaukset.json"
-WEATHER_FILE = "saatiedot.json"
-
-# met.no symbol_code → WMO-koodi (index.html käyttää WMO-koodeja sää-ikoneissa)
-METNO_TO_WMO = {
-    "clearsky": 0, "fair": 1, "partlycloudy": 2, "cloudy": 3,
-    "fog": 45, "lightdrizzle": 51, "drizzle": 53, "heavydrizzle": 55,
-    "lightrain": 61, "rain": 63, "heavyrain": 65,
-    "lightsleet": 66, "sleet": 67, "heavysleet": 67,
-    "lightsnow": 71, "snow": 73, "heavysnow": 75,
-    "lightrainshowers": 80, "rainshowers": 80, "heavyrainshowers": 82,
-    "lightsleetshowers": 67, "sleetshowers": 67,
-    "lightsnowshowers": 85, "snowshowers": 85, "heavysnowshowers": 86,
-    "thunder": 95, "lightrainandthunder": 95, "rainandthunder": 99,
-    "heavyrainandthunder": 99, "lightsleetandthunder": 95,
-    "lightsnowandthunder": 95, "snowandthunder": 99,
-}
-
-
-def metno_symbol_to_wmo(symbol: str) -> int:
-    """Muuntaa met.no symbol_code WMO-koodiksi."""
-    # Poistetaan _day/_night-pääte
-    base = symbol.replace("_day", "").replace("_night", "").replace("_polartwilight", "")
-    return METNO_TO_WMO.get(base, 3)
-
-
-def fetch_weather() -> dict:
-    """Hakee säätiedot met.no-palvelusta (Tampere) ja palauttaa siivotun rakenteen."""
-    url = "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=61.498&lon=23.761"
-    headers = {"User-Agent": "infonaytto/1.0 github.com/teemuusd/infonaytto2"}
-    r = requests.get(url, headers=headers, timeout=15)
-    r.raise_for_status()
-    data = r.json()
-
-    timeseries = data["properties"]["timeseries"]
-    now = datetime.now(LOCAL_TZ)
-
-    # Etsi nykyinen tunti
-    current_entry = None
-    for entry in timeseries:
-        t = datetime.fromisoformat(entry["time"].replace("Z", "+00:00")).astimezone(LOCAL_TZ)
-        if t <= now:
-            current_entry = entry
-        else:
-            break
-
-    if not current_entry:
-        current_entry = timeseries[0]
-
-    inst = current_entry["data"]["instant"]["details"]
-    symbol = (current_entry["data"].get("next_1_hours") or
-              current_entry["data"].get("next_6_hours", {})).get("summary", {}).get("symbol_code", "cloudy")
-
-    # Tämän päivän sademäärä: summataan next_1_hours-sade kaikista tunneista tänään
-    today_str = now.strftime("%Y-%m-%d")
-    precipitation_today = 0.0
-    for entry in timeseries:
-        t = datetime.fromisoformat(entry["time"].replace("Z", "+00:00")).astimezone(LOCAL_TZ)
-        if t.strftime("%Y-%m-%d") != today_str:
-            continue
-        rain = (entry["data"].get("next_1_hours") or {}).get("details", {}).get("precipitation_amount", 0.0)
-        precipitation_today += rain
-
-    current = {
-        "temperature_2m": inst["air_temperature"],
-        "apparent_temperature": inst["air_temperature"],  # met.no ei anna feels-like, käytetään lämpötilaa
-        "weather_code": metno_symbol_to_wmo(symbol),
-        "wind_speed_10m": round(inst["wind_speed"], 1),
-        "wind_gust_10m": round(inst.get("wind_speed_of_gust", inst["wind_speed"]), 1),
-        "precipitation_today_mm": round(precipitation_today, 1),
-    }
-
-    # Poimi 4 tulevan tunnin ennustetta 2h välein
-    future = [
-        entry for entry in timeseries
-        if datetime.fromisoformat(entry["time"].replace("Z", "+00:00")).astimezone(LOCAL_TZ) > now
-    ]
-    hourly = []
-    for i in range(4):
-        idx = i * 2
-        if idx < len(future):
-            entry = future[idx]
-            t = datetime.fromisoformat(entry["time"].replace("Z", "+00:00")).astimezone(LOCAL_TZ)
-            sym = (entry["data"].get("next_1_hours") or
-                   entry["data"].get("next_6_hours", {})).get("summary", {}).get("symbol_code", "cloudy")
-            hourly.append({
-                "time": t.isoformat(timespec="seconds"),
-                "temp": entry["data"]["instant"]["details"]["air_temperature"],
-                "code": metno_symbol_to_wmo(sym),
-            })
-
-    return {
-        "updatedAt": now.isoformat(timespec="seconds"),
-        "current": current,
-        "hourly": hourly,
-    }
 
 
 def get_access_token(tenant_id: str, client_id: str, client_secret: str) -> str:
@@ -268,15 +172,6 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
     print(f"Kirjoitettu {OUTPUT_FILE}")
-
-    # Säätiedot
-    try:
-        weather = fetch_weather()
-        with open(WEATHER_FILE, "w", encoding="utf-8") as f:
-            json.dump(weather, f, ensure_ascii=False, indent=2)
-        print(f"Kirjoitettu {WEATHER_FILE}")
-    except Exception as ex:
-        print(f"VAROITUS: Säätietojen haku epäonnistui: {ex}", file=sys.stderr)
 
 
 if __name__ == "__main__":
