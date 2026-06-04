@@ -1,10 +1,12 @@
 {
-  "updatedAt": "2026-06-04T16:31:53+03:00",
+  "updatedAt": "2026-06-04T16:42:24+03:00",
   "current": {
     "temperature_2m": 24.8,
     "apparent_temperature": 24.8,
     "weather_code": 3,
-    "wind_speed_10m": 4.4
+    "wind_speed_10m": 4.4,
+    "wind_gust_10m": 4.4,
+    "precipitation_today_mm": 0.0
   },
   "hourly": [
     {
