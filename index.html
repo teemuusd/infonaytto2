@@ -59,6 +59,24 @@
             Quote: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>,
         };
 
+        // met.no symbol_code → WMO-koodi
+        const METNO_TO_WMO = {
+          clearsky:0, fair:1, partlycloudy:2, cloudy:3,
+          fog:45, lightdrizzle:51, drizzle:53, heavydrizzle:55,
+          lightrain:61, rain:63, heavyrain:65,
+          lightsleet:66, sleet:67, heavysleet:67,
+          lightsnow:71, snow:73, heavysnow:75,
+          lightrainshowers:80, rainshowers:80, heavyrainshowers:82,
+          lightsleetshowers:67, sleetshowers:67,
+          lightsnowshowers:85, snowshowers:85, heavysnowshowers:85,
+          thunder:95, lightrainandthunder:95, rainandthunder:99,
+          heavyrainandthunder:99, lightsnowandthunder:95, snowandthunder:99,
+        };
+        const metnoToWmo = (symbol) => {
+          const base = (symbol || 'cloudy').replace(/_day|_night|_polartwilight/g, '');
+          return METNO_TO_WMO[base] ?? 3;
+        };
+
         // --- SÄÄLOGIIKKA ---
         function WeatherIcon({ code, size = 48 }) {
           const s = size;
@@ -628,27 +646,67 @@
             return () => clearInterval(refreshInterval);
           }, []);
 
-          // 3. Sää — luetaan saatiedot.json (Python-skripti hakee palvelimella)
+          // 3. Sää — met.no, suoraan selaimesta (CORS tuettu, ei aikaikkunaa)
           useEffect(() => {
             const fetchWeather = async () => {
               try {
-                const res = await fetch(`./saatiedot.json?nocache=${Date.now()}`);
-                if (!res.ok) throw new Error('saatiedot.json ei löydy');
+                const res = await fetch(
+                  'https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=61.498&lon=23.761'
+                );
+                if (!res.ok) throw new Error(`met.no ${res.status}`);
                 const data = await res.json();
-                if (data.current) {
-                  setWeather(data.current);
-                  setLoadingWeather(false);
+                const ts = data.properties.timeseries;
+                const now = new Date();
+
+                // Nykyinen tunti
+                let current_entry = ts[0];
+                for (const entry of ts) {
+                  if (new Date(entry.time) <= now) current_entry = entry;
+                  else break;
                 }
-                if (Array.isArray(data.hourly)) {
-                  setHourly(data.hourly);
+                const inst = current_entry.data.instant.details;
+                const sym = (current_entry.data.next_1_hours || current_entry.data.next_6_hours || {})
+                  ?.summary?.symbol_code || 'cloudy';
+
+                // Päivän kokonaissademäärä
+                const todayStr = now.toISOString().slice(0, 10);
+                let precipToday = 0;
+                for (const entry of ts) {
+                  if (!entry.time.startsWith(todayStr)) continue;
+                  precipToday += (entry.data.next_1_hours || {})?.details?.precipitation_amount || 0;
                 }
+
+                setWeather({
+                  temperature_2m: inst.air_temperature,
+                  apparent_temperature: inst.air_temperature,
+                  weather_code: metnoToWmo(sym),
+                  wind_speed_10m: Math.round(inst.wind_speed * 10) / 10,
+                  precipitation_today_mm: Math.round(precipToday * 10) / 10,
+                });
+                setLoadingWeather(false);
+
+                // Ennuste: 4 pistettä 2h välein
+                const future = ts.filter(e => new Date(e.time) > now);
+                const points = [];
+                for (let i = 0; i < 4; i++) {
+                  const entry = future[i * 2];
+                  if (!entry) break;
+                  const s = (entry.data.next_1_hours || entry.data.next_6_hours || {})
+                    ?.summary?.symbol_code || 'cloudy';
+                  points.push({
+                    time: entry.time,
+                    temp: entry.data.instant.details.air_temperature,
+                    code: metnoToWmo(s),
+                  });
+                }
+                setHourly(points);
               } catch (error) {
                 console.error('Sää:', error);
                 setLoadingWeather(false);
               }
             };
             fetchWeather();
-            const weatherTimer = setInterval(fetchWeather, 300000); // 5 min
+            const weatherTimer = setInterval(fetchWeather, 600000);
             return () => clearInterval(weatherTimer);
           }, []);
 
