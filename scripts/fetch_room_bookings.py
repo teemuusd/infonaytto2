@@ -1,11 +1,7 @@
 """
 Hakee toimiston työhuoneiden varaukset Microsoft Graph API:sta ja kirjoittaa
 niistä siivotun varaukset.json-tiedoston infonäyttöä varten.
-
-Skripti ei kirjaa lokiin tai tulosta varausten sisältöjä (aihe, osallistujat
-tms.), ja tallentaa JSON-tiedostoon vain minimitiedot:
-- alkamisaika, päättymisaika
-- varaajan nimikirjaimet (esim. "M.V.")
+Hakee myös Tampereen säätiedot wttr.in-palvelusta ja kirjoittaa saatiedot.json-tiedoston.
 
 Ympäristömuuttujat (asetetaan GitHub Secretseinä):
 - AZURE_TENANT_ID
@@ -37,6 +33,48 @@ except json.JSONDecodeError as e:
 
 LOCAL_TZ = ZoneInfo("Europe/Helsinki")
 OUTPUT_FILE = "varaukset.json"
+WEATHER_FILE = "saatiedot.json"
+
+
+def fetch_weather() -> dict:
+    """Hakee säätiedot Open-Meteosta (Tampere) ja palauttaa siivotun rakenteen."""
+    url = (
+        "https://api.open-meteo.com/v1/forecast"
+        "?latitude=61.498&longitude=23.761"
+        "&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m"
+        "&hourly=temperature_2m,weather_code"
+        "&forecast_days=2&wind_speed_unit=ms&timezone=auto"
+    )
+    r = requests.get(url, timeout=15)
+    r.raise_for_status()
+    data = r.json()
+
+    current = data["current"]
+    now = datetime.now(LOCAL_TZ)
+
+    # Etsi nykyhetkeä lähinnä oleva tunti ja poimi 4 pistettä 2h välein
+    times = data["hourly"]["time"]
+    idx_now = next((i for i, t in enumerate(times) if t > now.strftime("%Y-%m-%dT%H:%M")), 0)
+    hourly = []
+    for i in range(1, 5):
+        j = idx_now + (i * 2) - 1
+        if j < len(times):
+            hourly.append({
+                "time": times[j],
+                "temp": data["hourly"]["temperature_2m"][j],
+                "code": data["hourly"]["weather_code"][j],
+            })
+
+    return {
+        "updatedAt": now.isoformat(timespec="seconds"),
+        "current": {
+            "temperature_2m": current["temperature_2m"],
+            "apparent_temperature": current["apparent_temperature"],
+            "weather_code": current["weather_code"],
+            "wind_speed_10m": current["wind_speed_10m"],
+        },
+        "hourly": hourly,
+    }
 
 
 def get_access_token(tenant_id: str, client_id: str, client_secret: str) -> str:
@@ -177,6 +215,15 @@ def main():
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
     print(f"Kirjoitettu {OUTPUT_FILE}")
+
+    # Säätiedot
+    try:
+        weather = fetch_weather()
+        with open(WEATHER_FILE, "w", encoding="utf-8") as f:
+            json.dump(weather, f, ensure_ascii=False, indent=2)
+        print(f"Kirjoitettu {WEATHER_FILE}")
+    except Exception as ex:
+        print(f"VAROITUS: Säätietojen haku epäonnistui: {ex}", file=sys.stderr)
 
 
 if __name__ == "__main__":
