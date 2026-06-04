@@ -85,11 +85,23 @@ def fetch_weather() -> dict:
     symbol = (current_entry["data"].get("next_1_hours") or
               current_entry["data"].get("next_6_hours", {})).get("summary", {}).get("symbol_code", "cloudy")
 
+    # Tämän päivän sademäärä: summataan next_1_hours-sade kaikista tunneista tänään
+    today_str = now.strftime("%Y-%m-%d")
+    precipitation_today = 0.0
+    for entry in timeseries:
+        t = datetime.fromisoformat(entry["time"].replace("Z", "+00:00")).astimezone(LOCAL_TZ)
+        if t.strftime("%Y-%m-%d") != today_str:
+            continue
+        rain = (entry["data"].get("next_1_hours") or {}).get("details", {}).get("precipitation_amount", 0.0)
+        precipitation_today += rain
+
     current = {
         "temperature_2m": inst["air_temperature"],
         "apparent_temperature": inst["air_temperature"],  # met.no ei anna feels-like, käytetään lämpötilaa
         "weather_code": metno_symbol_to_wmo(symbol),
         "wind_speed_10m": round(inst["wind_speed"], 1),
+        "wind_gust_10m": round(inst.get("wind_speed_of_gust", inst["wind_speed"]), 1),
+        "precipitation_today_mm": round(precipitation_today, 1),
     }
 
     # Poimi 4 tulevan tunnin ennustetta 2h välein
