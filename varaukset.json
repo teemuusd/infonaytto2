@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-08T09:27:27+03:00",
+  "updatedAt": "2026-06-08T10:27:49+03:00",
   "rooms": [
     {
       "name": "Aava",
@@ -24,12 +24,24 @@
     },
     {
       "name": "Virta",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-06-08T10:00:00+03:00",
+          "end": "2026-06-08T11:00:00+03:00",
+          "organizerInitials": "HM"
+        }
+      ],
       "error": null
     },
     {
       "name": "Tyyni",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-06-08T10:00:00+03:00",
+          "end": "2026-06-08T11:00:00+03:00",
+          "organizerInitials": "JH"
+        }
+      ],
       "error": null
     },
     {
