@@ -1,52 +1,41 @@
 {
-  "updatedAt": "2026-06-05T19:21:43+03:00",
+  "updatedAt": "2026-06-08T09:05:48+03:00",
   "rooms": [
     {
       "name": "Aava",
       "bookings": [
         {
-          "start": "2026-06-05T08:30:00+03:00",
-          "end": "2026-06-05T09:00:00+03:00",
-          "organizerInitials": "JL"
+          "start": "2026-06-08T09:00:00+03:00",
+          "end": "2026-06-08T10:00:00+03:00",
+          "organizerInitials": "JH"
         },
         {
-          "start": "2026-06-05T10:00:00+03:00",
-          "end": "2026-06-05T10:45:00+03:00",
+          "start": "2026-06-08T14:00:00+03:00",
+          "end": "2026-06-08T15:00:00+03:00",
           "organizerInitials": "OO"
-        },
-        {
-          "start": "2026-06-05T14:00:00+03:00",
-          "end": "2026-06-05T14:30:00+03:00",
-          "organizerInitials": "TJ"
         }
       ],
       "error": null
     },
     {
       "name": "Virta",
-      "bookings": [
-        {
-          "start": "2026-06-05T12:00:00+03:00",
-          "end": "2026-06-05T14:30:00+03:00",
-          "organizerInitials": "JK"
-        }
-      ],
+      "bookings": [],
       "error": null
     },
     {
       "name": "Tyyni",
-      "bookings": [
-        {
-          "start": "2026-06-05T09:00:00+03:00",
-          "end": "2026-06-05T10:00:00+03:00",
-          "organizerInitials": "HM"
-        }
-      ],
+      "bookings": [],
       "error": null
     },
     {
       "name": "Kaiku",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-06-08T09:00:00+03:00",
+          "end": "2026-06-08T10:00:00+03:00",
+          "organizerInitials": "IS"
+        }
+      ],
       "error": null
     }
   ]
