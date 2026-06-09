@@ -1,21 +1,6 @@
 {
-  "updatedAt": "2026-06-09T09:43:59+03:00",
+  "updatedAt": "2026-06-09T10:16:54+03:00",
   "rooms": [
-    {
-      "name": "Aava",
-      "bookings": [],
-      "error": null
-    },
-    {
-      "name": "Virta",
-      "bookings": [],
-      "error": null
-    },
-    {
-      "name": "Tyyni",
-      "bookings": [],
-      "error": null
-    },
     {
       "name": "Kaiku",
       "bookings": [
@@ -25,6 +10,21 @@
           "organizerInitials": "EA"
         }
       ],
+      "error": null
+    },
+    {
+      "name": "Tyyni",
+      "bookings": [],
+      "error": null
+    },
+    {
+      "name": "Virta",
+      "bookings": [],
+      "error": null
+    },
+    {
+      "name": "Aava",
+      "bookings": [],
       "error": null
     }
   ]
