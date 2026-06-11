@@ -1,54 +1,22 @@
 {
-  "updatedAt": "2026-06-11T19:36:29+03:00",
+  "updatedAt": "2026-06-12T01:50:44+03:00",
   "rooms": [
     {
       "name": "Kaiku",
-      "bookings": [
-        {
-          "start": "2026-06-11T09:00:00+03:00",
-          "end": "2026-06-11T10:00:00+03:00",
-          "organizerInitials": "TV"
-        },
-        {
-          "start": "2026-06-11T14:00:00+03:00",
-          "end": "2026-06-11T14:30:00+03:00",
-          "organizerInitials": "JH"
-        }
-      ],
+      "bookings": [],
       "error": null
     },
     {
       "name": "Tyyni",
-      "bookings": [
-        {
-          "start": "2026-06-11T09:30:00+03:00",
-          "end": "2026-06-11T11:00:00+03:00",
-          "organizerInitials": "EA"
-        },
-        {
-          "start": "2026-06-11T14:00:00+03:00",
-          "end": "2026-06-11T16:00:00+03:00",
-          "organizerInitials": "OH"
-        }
-      ],
+      "bookings": [],
       "error": null
     },
     {
       "name": "Virta",
       "bookings": [
         {
-          "start": "2026-06-11T08:00:00+03:00",
-          "end": "2026-06-11T09:00:00+03:00",
-          "organizerInitials": "AL"
-        },
-        {
-          "start": "2026-06-11T13:00:00+03:00",
-          "end": "2026-06-11T14:00:00+03:00",
-          "organizerInitials": "OH"
-        },
-        {
-          "start": "2026-06-11T14:00:00+03:00",
-          "end": "2026-06-11T15:00:00+03:00",
+          "start": "2026-06-12T08:00:00+03:00",
+          "end": "2026-06-12T09:00:00+03:00",
           "organizerInitials": "AL"
         }
       ],
@@ -58,19 +26,9 @@
       "name": "Aava",
       "bookings": [
         {
-          "start": "2026-06-11T10:00:00+03:00",
-          "end": "2026-06-11T11:00:00+03:00",
+          "start": "2026-06-12T08:30:00+03:00",
+          "end": "2026-06-12T09:00:00+03:00",
           "organizerInitials": "JL"
-        },
-        {
-          "start": "2026-06-11T13:00:00+03:00",
-          "end": "2026-06-11T14:00:00+03:00",
-          "organizerInitials": "OO"
-        },
-        {
-          "start": "2026-06-11T14:30:00+03:00",
-          "end": "2026-06-11T16:50:00+03:00",
-          "organizerInitials": "JA"
         }
       ],
       "error": null
