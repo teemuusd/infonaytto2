@@ -38,6 +38,44 @@
         const DAY_END_HOUR = 17;
         const STARTING_SOON_MINUTES = 30;
 
+        // --- LOMATIEDOT ---
+        // Päivitä tätä listaa kun henkilöstön lomat muuttuvat.
+        // end = loman viimeinen päivä (mukaan lukien).
+        // Lomanäkymä poistuu automaattisesti kierrosta VACATION_VIEW_END_DATE jälkeen.
+        const VACATION_VIEW_END_DATE = "2026-08-08";
+
+        // Juhlapyhät ja muut vapaapäivät — lisää tähän tarvittaessa
+        const VAPAAPAIHAT = [
+          "2026-06-19", // Vapaa perjantai
+          "2026-06-26", // Juhannuspäivä
+        ];
+
+        const LOMAT = [
+          // Tarkistettu 16.6.2026 — end = loman viimeinen päivä (mukaan lukien)
+          { name: "Antti",      periods: [{ start: "2026-07-09", end: "2026-08-02" }] },
+          { name: "Arttu",      periods: [{ start: "2026-07-06", end: "2026-08-07" }] },
+          { name: "Eero",       periods: [{ start: "2026-06-22", end: "2026-07-03" }] },
+          { name: "Eetu",       periods: [{ start: "2026-06-08", end: "2026-06-19" }, { start: "2026-07-01", end: "2026-07-31" }] },
+          { name: "Hannu",      periods: [{ start: "2026-06-15", end: "2026-07-05" }, { start: "2026-07-27", end: "2026-08-02" }] },
+          { name: "Helena",     periods: [{ start: "2026-06-19", end: "2026-07-12" }] },
+          { name: "Ida",        periods: [{ start: "2026-06-29", end: "2026-07-19" }] },
+          { name: "Ida-Maaria", periods: [{ start: "2026-06-29", end: "2026-07-26" }] },
+          { name: "Joona",      periods: [{ start: "2026-07-13", end: "2026-08-09" }] },
+          { name: "Joonas",     periods: [{ start: "2026-06-15", end: "2026-07-05" }] },
+          { name: "Josefiina",  periods: [{ start: "2026-07-13", end: "2026-08-09" }] },
+          { name: "Kalle",      periods: [{ start: "2026-06-29", end: "2026-07-21" }] },
+          { name: "Lassi",      periods: [{ start: "2026-07-20", end: "2026-08-15" }] },
+          { name: "Leo",        periods: [{ start: "2026-07-16", end: "2026-07-17" }] },
+          { name: "Marko",      periods: [{ start: "2026-06-22", end: "2026-07-05" }, { start: "2026-07-10", end: "2026-08-30" }] },
+          { name: "Olli",       periods: [{ start: "2026-07-13", end: "2026-08-02" }] },
+          { name: "Oskari",     periods: [{ start: "2026-06-29", end: "2026-07-12" }] },
+          { name: "Otto H.",    periods: [{ start: "2026-07-02", end: "2026-07-03" }] },
+          { name: "Otto T.",    periods: [{ start: "2026-06-29", end: "2026-08-02" }] },
+          { name: "Sini",       periods: [{ start: "2026-06-18", end: "2026-06-30" }, { start: "2026-07-08", end: "2026-07-21" }] },
+          { name: "Teemu",      periods: [{ start: "2026-07-06", end: "2026-07-24" }] },
+          { name: "Tommi",      periods: [{ start: "2026-06-25", end: "2026-06-30" }, { start: "2026-07-13", end: "2026-08-09" }] },
+        ];
+
         // --- IKONIT (SVG) ---
         const ICONS = {
             Calendar: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
@@ -513,6 +551,142 @@
           );
         }
 
+        // --- LOMANÄKYMÄ ---
+        function VacationView() {
+          const DAY_NAMES = ['su','ma','ti','ke','to','pe','la'];
+
+          const toDay = (s) => { const d = new Date(s + 'T00:00:00'); d.setHours(0,0,0,0); return d; };
+          const fmt = (s) => { const d = toDay(s); return `${d.getDate()}.${d.getMonth()+1}.`; };
+          const isWorkday = (dateStr) => { const dow = toDay(dateStr).getDay(); return dow !== 0 && dow !== 6 && !VAPAAPAIHAT.includes(dateStr); };
+          const returnDay = (endStr) => {
+            const d = toDay(endStr); d.setDate(d.getDate()+1);
+            while (!isWorkday(d.toISOString().slice(0,10))) d.setDate(d.getDate()+1);
+            return DAY_NAMES[d.getDay()];
+          };
+          const startDay = (startStr) => DAY_NAMES[toDay(startStr).getDay()];
+
+          const today = useMemo(() => { const d = new Date(); d.setHours(0,0,0,0); return d; }, []);
+
+          const { fridayStr, weekNum } = useMemo(() => {
+            const dow = today.getDay();
+            const mon = new Date(today);
+            mon.setDate(today.getDate() + (dow === 0 ? -6 : 1 - dow));
+            const fri = new Date(mon);
+            fri.setDate(mon.getDate() + 4);
+            const fridayStr = fri.toISOString().slice(0, 10);
+            const tmp = new Date(mon);
+            tmp.setDate(tmp.getDate() + 3 - (tmp.getDay() + 6) % 7);
+            const w1 = new Date(tmp.getFullYear(), 0, 4);
+            const wn = 1 + Math.round(((tmp - w1) / 86400000 - 3 + (w1.getDay() + 6) % 7) / 7);
+            return { fridayStr, weekNum: wn };
+          }, [today]);
+
+          const todayStr = today.toISOString().slice(0, 10);
+
+          const { fullWeek, returning, leaving, totalOnVacation } = useMemo(() => {
+            const fw = [], ret = [], lv = [];
+            for (const person of LOMAT) {
+              const active = person.periods.find(p => p.start <= todayStr && todayStr <= p.end);
+              if (active) {
+                // Koko viikko: loma päättyy perjantaina tai myöhemmin (myös la/su = ei palata viikon aikana)
+                if (active.end >= fridayStr) fw.push({ name: person.name, period: active });
+                else ret.push({ name: person.name, period: active });
+              } else {
+                // Lomalle jäävät: loma alkaa tällä viikolla arkipäivänä (ei viikonloppu eikä vapaapäivä)
+                const next = person.periods.find(p => p.start > todayStr && p.start <= fridayStr && isWorkday(p.start));
+                if (next) lv.push({ name: person.name, period: next });
+              }
+            }
+            const byName = (a, b) => a.name.localeCompare(b.name, 'fi');
+            fw.sort(byName); ret.sort(byName); lv.sort(byName);
+            return { fullWeek: fw, returning: ret, leaving: lv, totalOnVacation: fw.length + ret.length };
+          }, [todayStr, fridayStr]);
+
+          const avatarColor = (name) => {
+            const cols = ['#f97316','#38bdf8','#a78bfa','#34d399','#f472b6'];
+            let h = 0; for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+            return cols[Math.abs(h) % cols.length];
+          };
+
+          const PersonRow = ({ name, period, badge, badgeStyle }) => {
+            const c = avatarColor(name);
+            return (
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'9px 12px', borderRadius:'10px', marginBottom:'5px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.07)' }}>
+                <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
+                  <div style={{ width:'32px', height:'32px', borderRadius:'50%', background: c+'22', border:`1px solid ${c}55`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', fontWeight:'500', color:c, flexShrink:0 }}>
+                    {name.charAt(0)}
+                  </div>
+                  <span style={{ fontSize:'14px', color:'#e2e8f0' }}>{name}</span>
+                </div>
+                <div style={{ display:'flex', alignItems:'center', gap:'7px' }}>
+                  <span style={{ fontSize:'12px', color:'#64748b' }}>{fmt(period.start)} – {fmt(period.end)}</span>
+                  {badge && <span style={{ fontSize:'11px', borderRadius:'6px', padding:'2px 7px', fontWeight:'500', ...badgeStyle }}>{badge}</span>}
+                </div>
+              </div>
+            );
+          };
+
+          const SectionLabel = ({ children }) => (
+            <div style={{ fontSize:'10px', letterSpacing:'0.1em', textTransform:'uppercase', color:'#475569', margin:'12px 0 6px 2px' }}>{children}</div>
+          );
+
+          const headerStyle = { display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'18px', paddingBottom:'12px', borderBottom:'1px solid rgba(255,255,255,0.08)' };
+          const wrapStyle = { height:'100%', background:'#0f172a', borderRadius:'16px', padding:'20px', color:'#f1f5f9', overflowY:'auto' };
+
+          if (totalOnVacation === 0 && leaving.length === 0) {
+            return (
+              <div style={wrapStyle}>
+                <div style={headerStyle}>
+                  <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                    <ICONS.Palm className="w-5 h-5 text-blue-400" />
+                    <span style={{ fontSize:'13px', fontWeight:'500', letterSpacing:'0.12em', color:'#fff', textTransform:'uppercase' }}>Lomalla nyt</span>
+                  </div>
+                  <span style={{ fontSize:'11px', color:'#475569' }}>Viikko {weekNum}</span>
+                </div>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'60%', color:'#475569', fontSize:'14px' }}>
+                  Ei lomalaisia tällä viikolla
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div style={wrapStyle}>
+              <div style={headerStyle}>
+                <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
+                  <ICONS.Palm className="w-5 h-5 text-blue-400" />
+                  <span style={{ fontSize:'13px', fontWeight:'500', letterSpacing:'0.12em', color:'#fff', textTransform:'uppercase' }}>Lomalla nyt</span>
+                  {totalOnVacation > 0 && (
+                    <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', background:'rgba(34,197,94,0.2)', color:'#4ade80', borderRadius:'20px', fontSize:'12px', fontWeight:'500', padding:'2px 9px', marginLeft:'4px' }}>
+                      {totalOnVacation}
+                    </span>
+                  )}
+                </div>
+                <span style={{ fontSize:'11px', color:'#475569' }}>Viikko {weekNum}</span>
+              </div>
+
+              {fullWeek.length > 0 && <>
+                <SectionLabel>Lomalla koko viikon</SectionLabel>
+                {fullWeek.map(p => <PersonRow key={p.name} name={p.name} period={p.period} />)}
+              </>}
+
+              {returning.length > 0 && <>
+                <SectionLabel>Palaavat tällä viikolla</SectionLabel>
+                {returning.map(p => <PersonRow key={p.name} name={p.name} period={p.period}
+                  badge={`palaa ${returnDay(p.period.end)}`}
+                  badgeStyle={{ background:'rgba(34,197,94,0.15)', color:'#4ade80' }} />)}
+              </>}
+
+              {leaving.length > 0 && <>
+                <SectionLabel>Lomalle jäävät</SectionLabel>
+                {leaving.map(p => <PersonRow key={p.name} name={p.name} period={p.period}
+                  badge={`jää lomalle ${startDay(p.period.start)}`}
+                  badgeStyle={{ background:'rgba(251,191,36,0.15)', color:'#fbbf24' }} />)}
+              </>}
+            </div>
+          );
+        }
+
         // --- LOMAKUVA-NÄKYMÄ ---
         function HolidayView({ imagePath }) {
           return (
@@ -556,8 +730,11 @@
             return () => { cancelled = true; clearInterval(id); };
           }, []);
 
+          const vacationActive = new Date().toISOString().slice(0, 10) <= VACATION_VIEW_END_DATE;
+
           const views = useMemo(() => {
             const v = ['rooms'];
+            if (vacationActive) v.push('vacation');
             if (holidayImagePath) v.push('holiday');
             return v;
           }, [holidayImagePath]);
@@ -587,6 +764,13 @@
                   }`}
                 >
                   <RoomBookingView currentTime={currentTime} />
+                </div>
+                <div
+                  className={`absolute inset-0 transition-opacity duration-700 ${
+                    currentView === 'vacation' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                  }`}
+                >
+                  <VacationView />
                 </div>
                 {holidayImagePath && (
                   <div
@@ -830,7 +1014,7 @@
                       </div>
                     ) : (<p>Säätietoja ei saatavilla.</p>)}
                     <div className="mt-4 text-xs text-slate-500 text-center relative z-10">
-                      
+                      Säätiedot päivittyvät 10 minuutin välein
                     </div>
                   </div>
 
