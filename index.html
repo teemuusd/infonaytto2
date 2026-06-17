@@ -555,12 +555,14 @@
         function VacationView() {
           const DAY_NAMES = ['su','ma','ti','ke','to','pe','la'];
 
-          const toDay = (s) => { const d = new Date(s + 'T00:00:00'); d.setHours(0,0,0,0); return d; };
+          const toDay = (s) => { const d = new Date(s + 'T00:00:00'); return d; };
+          // Paikallinen päivämäärämerkkijono (ei UTC-muunnosta, joka siirtäisi päivää Suomen aikavyöhykkeellä)
+          const localStr = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
           const fmt = (s) => { const d = toDay(s); return `${d.getDate()}.${d.getMonth()+1}.`; };
           const isWorkday = (dateStr) => { const dow = toDay(dateStr).getDay(); return dow !== 0 && dow !== 6 && !VAPAAPAIHAT.includes(dateStr); };
           const returnDay = (endStr) => {
             const d = toDay(endStr); d.setDate(d.getDate()+1);
-            while (!isWorkday(d.toISOString().slice(0,10))) d.setDate(d.getDate()+1);
+            while (!isWorkday(localStr(d))) d.setDate(d.getDate()+1);
             return DAY_NAMES[d.getDay()];
           };
           const startDay = (startStr) => DAY_NAMES[toDay(startStr).getDay()];
@@ -573,7 +575,7 @@
             mon.setDate(today.getDate() + (dow === 0 ? -6 : 1 - dow));
             const fri = new Date(mon);
             fri.setDate(mon.getDate() + 4);
-            const fridayStr = fri.toISOString().slice(0, 10);
+            const fridayStr = localStr(fri);
             const tmp = new Date(mon);
             tmp.setDate(tmp.getDate() + 3 - (tmp.getDay() + 6) % 7);
             const w1 = new Date(tmp.getFullYear(), 0, 4);
@@ -581,7 +583,7 @@
             return { fridayStr, weekNum: wn };
           }, [today]);
 
-          const todayStr = today.toISOString().slice(0, 10);
+          const todayStr = localStr(today);
 
           const { fullWeek, returning, leaving, totalOnVacation } = useMemo(() => {
             const fw = [], ret = [], lv = [];
@@ -730,7 +732,8 @@
             return () => { cancelled = true; clearInterval(id); };
           }, []);
 
-          const vacationActive = new Date().toISOString().slice(0, 10) <= VACATION_VIEW_END_DATE;
+          const _now = new Date();
+          const vacationActive = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}` <= VACATION_VIEW_END_DATE;
 
           const views = useMemo(() => {
             const v = ['rooms'];
