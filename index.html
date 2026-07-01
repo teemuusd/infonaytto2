@@ -613,20 +613,34 @@
           const PersonRow = ({ name, period, badge, badgeStyle }) => {
             const c = avatarColor(name);
             return (
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'9px 12px', borderRadius:'10px', marginBottom:'5px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.07)' }}>
-                <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-                  <div style={{ width:'32px', height:'32px', borderRadius:'50%', background: c+'22', border:`1px solid ${c}55`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'13px', fontWeight:'500', color:c, flexShrink:0 }}>
+              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'7px 10px', borderRadius:'10px', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.07)', minWidth:0 }}>
+                <div style={{ display:'flex', alignItems:'center', gap:'8px', minWidth:0 }}>
+                  <div style={{ width:'28px', height:'28px', borderRadius:'50%', background: c+'22', border:`1px solid ${c}55`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'12px', fontWeight:'500', color:c, flexShrink:0 }}>
                     {name.charAt(0)}
                   </div>
-                  <span style={{ fontSize:'14px', color:'#e2e8f0' }}>{name}</span>
+                  <span style={{ fontSize:'13px', color:'#e2e8f0', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{name}</span>
                 </div>
-                <div style={{ display:'flex', alignItems:'center', gap:'7px' }}>
-                  <span style={{ fontSize:'12px', color:'#64748b' }}>{fmt(period.start)} – {fmt(period.end)}</span>
-                  {badge && <span style={{ fontSize:'11px', borderRadius:'6px', padding:'2px 7px', fontWeight:'500', ...badgeStyle }}>{badge}</span>}
+                <div style={{ display:'flex', alignItems:'center', gap:'6px', flexShrink:0 }}>
+                  <span style={{ fontSize:'11px', color:'#64748b', whiteSpace:'nowrap' }}>{fmt(period.start)} – {fmt(period.end)}</span>
+                  {badge && <span style={{ fontSize:'10px', borderRadius:'6px', padding:'2px 6px', fontWeight:'500', whiteSpace:'nowrap', ...badgeStyle }}>{badge}</span>}
                 </div>
               </div>
             );
           };
+
+          const PersonGrid = ({ items, badgeFn, badgeStyle }) => (
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:'5px 8px', marginBottom:'4px' }}>
+              {items.map(p => (
+                <PersonRow
+                  key={p.name}
+                  name={p.name}
+                  period={p.period}
+                  badge={badgeFn ? badgeFn(p.period) : undefined}
+                  badgeStyle={badgeStyle}
+                />
+              ))}
+            </div>
+          );
 
           const SectionLabel = ({ children }) => (
             <div style={{ fontSize:'10px', letterSpacing:'0.1em', textTransform:'uppercase', color:'#475569', margin:'12px 0 6px 2px' }}>{children}</div>
@@ -669,21 +683,25 @@
 
               {fullWeek.length > 0 && <>
                 <SectionLabel>Lomalla koko viikon</SectionLabel>
-                {fullWeek.map(p => <PersonRow key={p.name} name={p.name} period={p.period} />)}
+                <PersonGrid items={fullWeek} />
               </>}
 
               {returning.length > 0 && <>
                 <SectionLabel>Palaavat tällä viikolla</SectionLabel>
-                {returning.map(p => <PersonRow key={p.name} name={p.name} period={p.period}
-                  badge={`palaa ${returnDay(p.period.end)}`}
-                  badgeStyle={{ background:'rgba(34,197,94,0.15)', color:'#4ade80' }} />)}
+                <PersonGrid
+                  items={returning}
+                  badgeFn={(period) => `palaa ${returnDay(period.end)}`}
+                  badgeStyle={{ background:'rgba(34,197,94,0.15)', color:'#4ade80' }}
+                />
               </>}
 
               {leaving.length > 0 && <>
                 <SectionLabel>Lomalle jäävät</SectionLabel>
-                {leaving.map(p => <PersonRow key={p.name} name={p.name} period={p.period}
-                  badge={`jää lomalle ${startDay(p.period.start)}`}
-                  badgeStyle={{ background:'rgba(251,191,36,0.15)', color:'#fbbf24' }} />)}
+                <PersonGrid
+                  items={leaving}
+                  badgeFn={(period) => `jää lomalle ${startDay(period.start)}`}
+                  badgeStyle={{ background:'rgba(251,191,36,0.15)', color:'#fbbf24' }}
+                />
               </>}
             </div>
           );
