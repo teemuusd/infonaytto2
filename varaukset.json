@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-07-16T19:19:39+03:00",
+  "updatedAt": "2026-07-17T01:04:59+03:00",
   "rooms": [
     {
       "name": "Kaiku",
@@ -18,13 +18,7 @@
     },
     {
       "name": "Aava",
-      "bookings": [
-        {
-          "start": "2026-07-16T13:00:00+03:00",
-          "end": "2026-07-16T14:00:00+03:00",
-          "organizerInitials": "OO"
-        }
-      ],
+      "bookings": [],
       "error": null
     }
   ]
