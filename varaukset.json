@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-19T08:16:20+03:00",
+  "updatedAt": "2026-08-19T08:20:19+03:00",
   "rooms": [
     {
       "name": "Kaiku",
@@ -8,7 +8,13 @@
     },
     {
       "name": "Tyyni",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-08-19T12:00:00+03:00",
+          "end": "2026-08-19T13:00:00+03:00",
+          "organizerInitials": "LJ"
+        }
+      ],
       "error": null
     },
     {
