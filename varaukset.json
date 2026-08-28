@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-08-28T11:45:22+03:00",
+  "updatedAt": "2026-08-28T11:50:30+03:00",
   "rooms": [
     {
       "name": "Kaiku",
@@ -13,7 +13,13 @@
     },
     {
       "name": "Virta",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-08-28T12:00:00+03:00",
+          "end": "2026-08-28T13:00:00+03:00",
+          "organizerInitials": "HM"
+        }
+      ],
       "error": null
     },
     {
