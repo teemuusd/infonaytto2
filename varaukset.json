@@ -1,62 +1,30 @@
 {
-  "updatedAt": "2026-09-21T23:01:44+03:00",
+  "updatedAt": "2026-09-22T02:54:41+03:00",
   "rooms": [
     {
       "name": "Kaiku",
-      "bookings": [
-        {
-          "start": "2026-09-21T13:00:00+03:00",
-          "end": "2026-09-21T14:00:00+03:00",
-          "organizerInitials": "EA"
-        }
-      ],
-      "error": null
-    },
-    {
-      "name": "Tyyni",
-      "bookings": [
-        {
-          "start": "2026-09-21T08:00:00+03:00",
-          "end": "2026-09-21T09:00:00+03:00",
-          "organizerInitials": "VA"
-        },
-        {
-          "start": "2026-09-21T09:30:00+03:00",
-          "end": "2026-09-21T11:00:00+03:00",
-          "organizerInitials": "VA"
-        },
-        {
-          "start": "2026-09-21T14:30:00+03:00",
-          "end": "2026-09-21T15:00:00+03:00",
-          "organizerInitials": "LJ"
-        }
-      ],
-      "error": null
-    },
-    {
-      "name": "Virta",
       "bookings": [],
       "error": null
     },
     {
-      "name": "Aava",
+      "name": "Tyyni",
+      "bookings": [],
+      "error": null
+    },
+    {
+      "name": "Virta",
       "bookings": [
         {
-          "start": "2026-09-21T09:30:00+03:00",
-          "end": "2026-09-21T11:00:00+03:00",
-          "organizerInitials": "HM"
-        },
-        {
-          "start": "2026-09-21T12:00:00+03:00",
-          "end": "2026-09-21T13:00:00+03:00",
-          "organizerInitials": "OO"
-        },
-        {
-          "start": "2026-09-21T13:00:00+03:00",
-          "end": "2026-09-21T15:00:00+03:00",
-          "organizerInitials": "OO"
+          "start": "2026-09-22T14:00:00+03:00",
+          "end": "2026-09-22T16:00:00+03:00",
+          "organizerInitials": "IT"
         }
       ],
+      "error": null
+    },
+    {
+      "name": "Aava",
+      "bookings": [],
       "error": null
     }
   ]
