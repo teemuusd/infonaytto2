@@ -50,31 +50,6 @@
           "2026-06-26", // Juhannuspäivä
         ];
 
-        const LOMAT = [
-          // Tarkistettu 16.6.2026 — end = loman viimeinen päivä (mukaan lukien)
-          { name: "Antti",      periods: [{ start: "2026-07-09", end: "2026-08-02" }] },
-          { name: "Arttu",      periods: [{ start: "2026-07-06", end: "2026-08-07" }] },
-          { name: "Eero",       periods: [{ start: "2026-06-22", end: "2026-07-03" }] },
-          { name: "Eetu",       periods: [{ start: "2026-06-08", end: "2026-06-19" }, { start: "2026-07-06", end: "2026-07-31" }] },
-          { name: "Hannu",      periods: [{ start: "2026-06-15", end: "2026-07-05" }, { start: "2026-07-27", end: "2026-08-02" }] },
-          { name: "Helena",     periods: [{ start: "2026-06-19", end: "2026-07-12" }] },
-          { name: "Ida",        periods: [{ start: "2026-06-29", end: "2026-07-19" }] },
-          { name: "Ida-Maaria", periods: [{ start: "2026-06-29", end: "2026-07-26" }] },
-          { name: "Joona",      periods: [{ start: "2026-07-13", end: "2026-08-09" }] },
-          { name: "Joonas",     periods: [{ start: "2026-06-15", end: "2026-07-05" }] },
-          { name: "Josefiina",  periods: [{ start: "2026-07-13", end: "2026-08-09" }] },
-          { name: "Kalle",      periods: [{ start: "2026-06-29", end: "2026-07-21" }] },
-          { name: "Lassi",      periods: [{ start: "2026-07-20", end: "2026-08-15" }] },
-          { name: "Leo",        periods: [{ start: "2026-07-16", end: "2026-07-17" }] },
-          { name: "Marko",      periods: [{ start: "2026-06-22", end: "2026-07-05" }, { start: "2026-07-10", end: "2026-08-30" }] },
-          { name: "Olli",       periods: [{ start: "2026-07-13", end: "2026-08-02" }] },
-          { name: "Oskari",     periods: [{ start: "2026-06-29", end: "2026-07-12" }] },
-          { name: "Otto H.",    periods: [{ start: "2026-07-02", end: "2026-07-03" }] },
-          { name: "Otto T.",    periods: [{ start: "2026-06-29", end: "2026-08-02" }] },
-          { name: "Sini",       periods: [{ start: "2026-06-18", end: "2026-06-30" }, { start: "2026-07-08", end: "2026-07-21" }] },
-          { name: "Teemu",      periods: [{ start: "2026-07-06", end: "2026-07-24" }] },
-          { name: "Tommi",      periods: [{ start: "2026-06-25", end: "2026-06-30" }, { start: "2026-07-13", end: "2026-08-09" }] },
-        ];
 
         // --- IKONIT (SVG) ---
         const ICONS = {
@@ -523,30 +498,6 @@
               {data.rooms.map(room => (
                 <RoomCard key={room.name} room={room} currentTime={currentTime} />
               ))}
-            </div>
-          );
-        }
-
-        // --- NYSSE-NÄKYMÄ ---
-        function NysseView() {
-          const [filterMode, setFilterMode] = useState('normal');
-          const getFilterStyle = () => filterMode === 'grayscale' ? 'grayscale(100%) contrast(110%) brightness(90%)' : 'none';
-
-          return (
-            <div className="h-full relative bg-black rounded-2xl overflow-hidden border border-slate-700 shadow-xl">
-              <div className="absolute top-4 right-4 z-20 pointer-events-auto flex gap-7 p-3 bg-slate-900 rounded-lg backdrop-blur-sm border border-slate-700">
-                <button onClick={() => setFilterMode('normal')} className={`p-3 rounded transition-colors ${filterMode === 'normal' ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'}`}><ICONS.Eye size={18} /></button>
-                <button onClick={() => setFilterMode('grayscale')} className={`p-3 rounded transition-colors ${filterMode === 'grayscale' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-white'}`}><ICONS.Moon size={18} /></button>
-              </div>
-
-              <div className="w-full h-full bg-white" style={{ filter: getFilterStyle(), transition: 'filter 0.5s ease' }}>
-                <iframe
-                  src="https://tremonitori.digitransit.fi/view?cont=Bw9FQAJ759PJGqMQS59ACA=="
-                  className="w-full h-full border-0"
-                  title="Tampere Monitori"
-                  allowFullScreen
-                />
-              </div>
             </div>
           );
         }
