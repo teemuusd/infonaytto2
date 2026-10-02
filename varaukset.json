@@ -1,15 +1,9 @@
 {
-  "updatedAt": "2026-10-01T20:16:42+03:00",
+  "updatedAt": "2026-10-02T03:35:16+03:00",
   "rooms": [
     {
       "name": "Kaiku",
-      "bookings": [
-        {
-          "start": "2026-10-01T07:30:00+03:00",
-          "end": "2026-10-01T09:00:00+03:00",
-          "organizerInitials": "JH"
-        }
-      ],
+      "bookings": [],
       "error": null
     },
     {
@@ -19,24 +13,12 @@
     },
     {
       "name": "Virta",
-      "bookings": [
-        {
-          "start": "2026-10-01T09:00:00+03:00",
-          "end": "2026-10-01T12:00:00+03:00",
-          "organizerInitials": "TJ"
-        }
-      ],
+      "bookings": [],
       "error": null
     },
     {
       "name": "Aava",
-      "bookings": [
-        {
-          "start": "2026-10-01T09:00:00+03:00",
-          "end": "2026-10-01T15:00:00+03:00",
-          "organizerInitials": "TV"
-        }
-      ],
+      "bookings": [],
       "error": null
     }
   ]
