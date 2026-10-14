@@ -1,9 +1,15 @@
 {
-  "updatedAt": "2026-10-14T08:35:15+03:00",
+  "updatedAt": "2026-10-14T08:40:22+03:00",
   "rooms": [
     {
       "name": "Kaiku",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-10-14T08:30:00+03:00",
+          "end": "2026-10-14T09:30:00+03:00",
+          "organizerInitials": "VA"
+        }
+      ],
       "error": null
     },
     {
