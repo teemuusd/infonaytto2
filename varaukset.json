@@ -1,31 +1,14 @@
 {
-  "updatedAt": "2026-10-14T21:48:27+03:00",
+  "updatedAt": "2026-10-15T02:45:01+03:00",
   "rooms": [
     {
       "name": "Kaiku",
-      "bookings": [
-        {
-          "start": "2026-10-14T08:30:00+03:00",
-          "end": "2026-10-14T10:00:00+03:00",
-          "organizerInitials": "VA"
-        }
-      ],
+      "bookings": [],
       "error": null
     },
     {
       "name": "Tyyni",
-      "bookings": [
-        {
-          "start": "2026-10-14T09:00:00+03:00",
-          "end": "2026-10-14T11:00:00+03:00",
-          "organizerInitials": "EB"
-        },
-        {
-          "start": "2026-10-14T13:00:00+03:00",
-          "end": "2026-10-14T15:00:00+03:00",
-          "organizerInitials": "VA"
-        }
-      ],
+      "bookings": [],
       "error": null
     },
     {
