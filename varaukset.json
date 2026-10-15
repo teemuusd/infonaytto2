@@ -1,13 +1,18 @@
 {
-  "updatedAt": "2026-10-15T08:50:21+03:00",
+  "updatedAt": "2026-10-15T08:55:16+03:00",
   "rooms": [
     {
       "name": "Kaiku",
       "bookings": [
         {
           "start": "2026-10-15T07:30:00+03:00",
-          "end": "2026-10-15T09:00:00+03:00",
+          "end": "2026-10-15T10:00:00+03:00",
           "organizerInitials": "VA"
+        },
+        {
+          "start": "2026-10-15T12:00:00+03:00",
+          "end": "2026-10-15T13:00:00+03:00",
+          "organizerInitials": "EA"
         }
       ],
       "error": null
@@ -19,7 +24,13 @@
     },
     {
       "name": "Virta",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-10-15T09:00:00+03:00",
+          "end": "2026-10-15T11:00:00+03:00",
+          "organizerInitials": "TJ"
+        }
+      ],
       "error": null
     },
     {
