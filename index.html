@@ -44,6 +44,11 @@
         // Lomanäkymä poistuu automaattisesti kierrosta VACATION_VIEW_END_DATE jälkeen.
         const VACATION_VIEW_END_DATE = "2026-08-08";
 
+        // Lomaluettelo puuttui alkuperäisestä tiedostosta.
+        // Tyhjä lista poistaa lomanäkymän kierrosta. Lisää oikeat tiedot tähän:
+        // { name: "Nimi", periods: [{ start: "2026-07-01", end: "2026-07-31" }] }
+        const LOMAT = [];
+
         // Juhlapyhät ja muut vapaapäivät — lisää tähän tarvittaessa
         const VAPAAPAIHAT = [
           "2026-06-19", // Vapaa perjantai
@@ -503,7 +508,7 @@
         }
 
         // --- LOMANÄKYMÄ ---
-        function VacationView() {
+        function VacationView({ currentTime }) {
           const DAY_NAMES = ['su','ma','ti','ke','to','pe','la'];
 
           const toDay = (s) => { const d = new Date(s + 'T00:00:00'); return d; };
@@ -518,7 +523,8 @@
           };
           const startDay = (startStr) => DAY_NAMES[toDay(startStr).getDay()];
 
-          const today = useMemo(() => { const d = new Date(); d.setHours(0,0,0,0); return d; }, []);
+          const todayStr = localStr(currentTime);
+          const today = useMemo(() => toDay(todayStr), [todayStr]);
 
           const { fridayStr, weekNum } = useMemo(() => {
             const dow = today.getDay();
@@ -533,8 +539,6 @@
             const wn = 1 + Math.round(((tmp - w1) / 86400000 - 3 + (w1.getDay() + 6) % 7) / 7);
             return { fridayStr, weekNum: wn };
           }, [today]);
-
-          const todayStr = localStr(today);
 
           const { fullWeek, returning, leaving, totalOnVacation } = useMemo(() => {
             const fw = [], ret = [], lv = [];
@@ -701,15 +705,15 @@
             return () => { cancelled = true; clearInterval(id); };
           }, []);
 
-          const _now = new Date();
-          const vacationActive = `${_now.getFullYear()}-${String(_now.getMonth()+1).padStart(2,'0')}-${String(_now.getDate()).padStart(2,'0')}` <= VACATION_VIEW_END_DATE;
+          const todayStr = `${currentTime.getFullYear()}-${String(currentTime.getMonth()+1).padStart(2,'0')}-${String(currentTime.getDate()).padStart(2,'0')}`;
+          const vacationActive = LOMAT.length > 0 && todayStr <= VACATION_VIEW_END_DATE;
 
           const views = useMemo(() => {
             const v = ['rooms'];
             if (vacationActive) v.push('vacation');
             if (holidayImagePath) v.push('holiday');
             return v;
-          }, [holidayImagePath]);
+          }, [holidayImagePath, vacationActive]);
 
           useEffect(() => {
             if (currentViewIndex >= views.length) {
@@ -737,13 +741,15 @@
                 >
                   <RoomBookingView currentTime={currentTime} />
                 </div>
-                <div
-                  className={`absolute inset-0 transition-opacity duration-700 ${
-                    currentView === 'vacation' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-                  }`}
-                >
-                  <VacationView />
-                </div>
+                {vacationActive && (
+                  <div
+                    className={`absolute inset-0 transition-opacity duration-700 ${
+                      currentView === 'vacation' ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
+                    }`}
+                  >
+                    <VacationView currentTime={currentTime} />
+                  </div>
+                )}
                 {holidayImagePath && (
                   <div
                     className={`absolute inset-0 transition-opacity duration-700 ${
