@@ -1,31 +1,14 @@
 {
-  "updatedAt": "2026-11-04T22:00:49+02:00",
+  "updatedAt": "2026-11-05T03:20:57+02:00",
   "rooms": [
     {
       "name": "Kaiku",
-      "bookings": [
-        {
-          "start": "2026-11-04T07:00:00+02:00",
-          "end": "2026-11-04T11:00:00+02:00",
-          "organizerInitials": "VA"
-        },
-        {
-          "start": "2026-11-04T12:00:00+02:00",
-          "end": "2026-11-04T13:00:00+02:00",
-          "organizerInitials": "VA"
-        }
-      ],
+      "bookings": [],
       "error": null
     },
     {
       "name": "Tyyni",
-      "bookings": [
-        {
-          "start": "2026-11-04T13:00:00+02:00",
-          "end": "2026-11-04T15:00:00+02:00",
-          "organizerInitials": "EB"
-        }
-      ],
+      "bookings": [],
       "error": null
     },
     {
@@ -35,7 +18,18 @@
     },
     {
       "name": "Aava",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-11-05T08:30:00+02:00",
+          "end": "2026-11-05T09:00:00+02:00",
+          "organizerInitials": "OT"
+        },
+        {
+          "start": "2026-11-05T12:00:00+02:00",
+          "end": "2026-11-05T13:00:00+02:00",
+          "organizerInitials": "OO"
+        }
+      ],
       "error": null
     }
   ]
