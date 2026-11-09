@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-09T12:05:19+02:00",
+  "updatedAt": "2026-11-09T12:10:21+02:00",
   "rooms": [
     {
       "name": "Kaiku",
@@ -29,14 +29,8 @@
     },
     {
       "name": "Virta",
-      "bookings": [
-        {
-          "start": "2026-11-09T10:00:00+02:00",
-          "end": "2026-11-09T11:00:00+02:00",
-          "organizerInitials": "JH"
-        }
-      ],
-      "error": null
+      "bookings": [],
+      "error": "HTTP 503"
     },
     {
       "name": "Aava",
