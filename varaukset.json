@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-09T08:40:23+02:00",
+  "updatedAt": "2026-11-09T08:45:25+02:00",
   "rooms": [
     {
       "name": "Kaiku",
@@ -13,6 +13,11 @@
           "start": "2026-11-09T08:00:00+02:00",
           "end": "2026-11-09T09:00:00+02:00",
           "organizerInitials": "LJ"
+        },
+        {
+          "start": "2026-11-09T15:00:00+02:00",
+          "end": "2026-11-09T16:00:00+02:00",
+          "organizerInitials": "HM"
         }
       ],
       "error": null
@@ -30,7 +35,18 @@
     },
     {
       "name": "Aava",
-      "bookings": [],
+      "bookings": [
+        {
+          "start": "2026-11-09T09:00:00+02:00",
+          "end": "2026-11-09T11:00:00+02:00",
+          "organizerInitials": "HM"
+        },
+        {
+          "start": "2026-11-09T13:00:00+02:00",
+          "end": "2026-11-09T14:00:00+02:00",
+          "organizerInitials": "HM"
+        }
+      ],
       "error": null
     }
   ]
