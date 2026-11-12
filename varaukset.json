@@ -1,31 +1,25 @@
 {
-  "updatedAt": "2026-11-12T18:55:21+02:00",
+  "updatedAt": "2026-11-12T23:18:33+02:00",
   "rooms": [
     {
       "name": "Kaiku",
-      "bookings": [
-        {
-          "start": "2026-11-12T08:00:00+02:00",
-          "end": "2026-11-12T12:30:00+02:00",
-          "organizerInitials": "VA"
-        }
-      ],
-      "error": null
+      "bookings": [],
+      "error": "HTTP 502"
     },
     {
       "name": "Tyyni",
       "bookings": [],
-      "error": null
+      "error": "HTTP 502"
     },
     {
       "name": "Virta",
       "bookings": [],
-      "error": null
+      "error": "HTTP 502"
     },
     {
       "name": "Aava",
       "bookings": [],
-      "error": null
+      "error": "HTTP 502"
     }
   ]
 }
