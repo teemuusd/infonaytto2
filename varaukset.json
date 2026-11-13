@@ -1,15 +1,21 @@
 {
-  "updatedAt": "2026-11-13T08:20:23+02:00",
+  "updatedAt": "2026-11-13T08:25:18+02:00",
   "rooms": [
     {
       "name": "Kaiku",
-      "bookings": [],
-      "error": "HTTP 504"
+      "bookings": [
+        {
+          "start": "2026-11-13T08:00:00+02:00",
+          "end": "2026-11-13T09:30:00+02:00",
+          "organizerInitials": "VA"
+        }
+      ],
+      "error": null
     },
     {
       "name": "Tyyni",
       "bookings": [],
-      "error": "HTTP 504"
+      "error": null
     },
     {
       "name": "Virta",
@@ -19,7 +25,7 @@
     {
       "name": "Aava",
       "bookings": [],
-      "error": "HTTP 500"
+      "error": null
     }
   ]
 }
