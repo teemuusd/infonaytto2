@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-13T06:00:47+02:00",
+  "updatedAt": "2026-11-13T06:05:18+02:00",
   "rooms": [
     {
       "name": "Kaiku",
@@ -9,7 +9,7 @@
     {
       "name": "Tyyni",
       "bookings": [],
-      "error": "HTTP 503"
+      "error": "HTTP 500"
     },
     {
       "name": "Virta",
@@ -19,7 +19,7 @@
     {
       "name": "Aava",
       "bookings": [],
-      "error": "HTTP 503"
+      "error": "HTTP 502"
     }
   ]
 }
